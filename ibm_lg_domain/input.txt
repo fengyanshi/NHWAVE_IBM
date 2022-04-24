@@ -5,12 +5,12 @@
 TITLE = open_channel_flow_angle
 
 ! ---------------- RESULT_FOLDER-------------------------------
-RESULT_FOLDER = ./results/
+RESULT_FOLDER = /Users/fengyanshi/TMP/tmp2/
 
 ! --------------------DIMENSION---------------------------------
 ! cell numbers
 Mglob = 656
-Nglob = 100
+Nglob = 200
 Kglob = 30
 
 ! --------------------PROCESSOR NUMBER-------------------------
@@ -330,6 +330,10 @@ SLIDE_MINTHICK = 0.00001
 RHEOLOGY_ON = F
 Yield_Stress = 10.
 Plastic_Visc = 0.0
+
+! --------------------OBSTACLE (IBM) ---------------------------
+OBS_Require_Rxyz= F
+OBS_MASK_FILE = obs_mask.txt
 
 ! --------------------PROBE OUTPUT---------------------------------
 ! output variables at stations which are given in file stat.txt
