@@ -9,9 +9,13 @@ NHWAVE Immersed Boundary Method in s-coordinate
 NOTE: This page provides info about the development of the IBM module and s-coordinate.  
 Some contents will merge into NHWAVE (Kirby's) GIT Repository and future WIKI page.
 
+.. figure:: images/mesh_vort.png
+    :align: center
+    :alt: alternate text
+    :figclass: align-center
+
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
    code
    method

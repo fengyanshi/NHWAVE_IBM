@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Method &#8212; NHWAVE WIKI 0.0 documentation</title>
+    <title>IBM module &#8212; NHWAVE WIKI 0.0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -14,11 +14,10 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Representation of 3D geometry of obstacles" href="method_theory.html" />
-    <link rel="prev" title="Git repository" href="code.html" />
+    <link rel="next" title="Pre-processing" href="method_preprocessing.html" />
+    <link rel="prev" title="&lt;no title&gt;" href="method_theory.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -35,18 +34,64 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="method">
-<h1>Method<a class="headerlink" href="#method" title="Permalink to this headline">¶</a></h1>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="method_theory.html">Representation of 3D geometry of obstacles</a><ul class="simple">
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="method_code.html">IBM module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="method_modification_main_program.html">Modification in main program</a></li>
-<li class="toctree-l1"><a class="reference internal" href="method_preprocessing.html">Pre-processing</a></li>
-</ul>
+  <div class="section" id="ibm-module">
+<h1>IBM module<a class="headerlink" href="#ibm-module" title="Permalink to this headline">¶</a></h1>
+<ol class="arabic simple">
+<li>The code IBM module was in mod_immersed.F</li>
+</ol>
+<blockquote>
+<div><div class="highlight-rest notranslate"><div class="highlight"><pre><span></span>MODULE IBM_MODULE
+USE GLOBAL
+IMPLICIT NONE
+ real(SP) :: obs_u,obs_v,obs_w
+ real(SP), dimension(:,:,:), allocatable :: ObsForceX,ObsForceY,ObsForceZ
+ real(SP), dimension(:,:,:), allocatable :: set_dist_x,set_dist_y,set_dist_z
+ REAL(SP),DIMENSION(:,:,:),ALLOCATABLE :: Mask_Obs,Rx,Ry,Rz,Tmp_obs
+ integer, dimension(:,:,:), allocatable :: set_flag,set_flag_old
+SAVE
+
+END MODULE IBM_MODULE
+</pre></div>
 </div>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li>The module contains</li>
+</ol>
+<blockquote>
+<div><div class="highlight-rest notranslate"><div class="highlight"><pre><span></span>SUBROUTINE OBS_INITIALIZATION
+  ! used to read obstacle files
+
+ OPEN(7,FILE=TRIM(OBS_MASK_FILE),status=&#39;old&#39;)
+<span class="cp">   ...</span>
+<span class="cp"> CLOSE(7)</span>
+
+<span class="cp"> IF(OBS_Require_Rxyz) THEN</span>
+<span class="cp">   OPEN(7,FILE=TRIM(OBS_Rx_FILE),status=&#39;old&#39;)</span>
+<span class="cp">     ...</span>
+<span class="cp">   CLOSE(7)</span>
+<span class="cp">   OPEN(7,FILE=TRIM(OBS_Ry_FILE),status=&#39;old&#39;)</span>
+<span class="cp">     ...</span>
+<span class="cp">   CLOSE(7)</span>
+<span class="cp">   OPEN(7,FILE=TRIM(OBS_Rz_FILE),status=&#39;old&#39;)</span>
+<span class="cp">     ...</span>
+<span class="cp">   CLOSE(7)</span>
+<span class="cp"> ENDIF</span>
+END SUBROUTINE OBS_INITIALIZATION
+</pre></div>
+</div>
+<div class="highlight-rest notranslate"><div class="highlight"><pre><span></span>SUBROUTINE SET_OBSVEL
+ ! set speed of obstacles (not used in this application)
+<span class="cp">  ...</span>
+END SUBROUTINE SET_OBSVEL
+</pre></div>
+</div>
+<div class="highlight-rest notranslate"><div class="highlight"><pre><span></span>SUBROUTINE IMM_OBS
+  ! Calculate forcing at the obstacle boundary
+  ! Gangfeng original subroutine
+END SUBROUTINE IMM_OBS
+</pre></div>
+</div>
+</div></blockquote>
 </div>
 
 
@@ -66,12 +111,11 @@
 
 
 <h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="code.html">Git repository</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Method</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="method_theory.html">Representation of 3D geometry of obstacles</a></li>
-<li class="toctree-l2"><a class="reference internal" href="method_code.html">IBM module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="method_modification_main_program.html">Modification in main program</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="method.html">Method</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">IBM module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="method_preprocessing.html">Pre-processing</a></li>
 </ul>
 </li>
@@ -82,8 +126,10 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="code.html" title="previous chapter">Git repository</a></li>
-      <li>Next: <a href="method_theory.html" title="next chapter">Representation of 3D geometry of obstacles</a></li>
+  <li><a href="method.html">Method</a><ul>
+      <li>Previous: <a href="method_theory.html" title="previous chapter">&lt;no title&gt;</a></li>
+      <li>Next: <a href="method_preprocessing.html" title="next chapter">Pre-processing</a></li>
+  </ul></li>
   </ul></li>
 </ul>
 </div>
@@ -119,7 +165,7 @@
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="_sources/method.rst.txt"
+      <a href="_sources/method_code.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 
