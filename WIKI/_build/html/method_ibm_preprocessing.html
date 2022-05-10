@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Git repository &#8212; NHWAVE WIKI 0.0 documentation</title>
+    <title>Pre-processing &#8212; NHWAVE WIKI 0.0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -17,8 +17,8 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Method" href="method.html" />
-    <link rel="prev" title="NHWAVE Immersed Boundary Method in s-coordinate" href="index.html" />
+    <link rel="next" title="Examples" href="examples.html" />
+    <link rel="prev" title="Modification in main program" href="method_ibm_in_main.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -35,14 +35,39 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="git-repository">
-<h1>Git repository<a class="headerlink" href="#git-repository" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="pre-processing">
+<h1>Pre-processing<a class="headerlink" href="#pre-processing" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 </div>
-<p><a class="reference external" href="https://github.com/fengyanshi/NHWAVE_IBM.git">Git repositoary</a></p>
+<div class="toctree-wrapper compound">
+</div>
+<p>An example for preprocessing is in /lloyd_ibm_coarse_grid/ (Git repository). It’s the case of Lloyd experiment using very coarse grid (0.06 x0.06 m). Model setup:</p>
 <blockquote>
-<div>The documentation development of this website is in the sub-directory /WIKI/:</div></blockquote>
-<p><a class="reference external" href="https://github.com/fengyanshi/NHWAVE_IBM/tree/main/WIKI">Documentation</a></p>
+<div><div class="highlight-rest notranslate"><div class="highlight"><pre><span></span>! cell numbers
+ Mglob = 164
+ Nglob = 25
+ Kglob = 30
+
+! grid sizes
+ DX = 0.06
+ DY = 0.06
+</pre></div>
+</div>
+</div></blockquote>
+<div class="align-center figure">
+<img alt="alternate text" src="_images/lloyd_grid.png" />
+</div>
+<p>This figure is only for demonstration. For the steady state case, we don’t bother using the new s-coordinate</p>
+<p>In /lloyd_ibm_coarse_grid/, use mk_obstacle.m to generate three files: obs_mask.txt, obs_rx.txt and obs_ry.txt, which are input files of the model.</p>
+<p>To check if the generated files are correct, check the figures:</p>
+<div class="align-center figure">
+<img alt="alternate text" src="_images/check_mask.jpg" />
+</div>
+<p>Masks of Lloyd case. Note: the y-axis is N-dimension x L-levels.</p>
+<div class="align-center figure">
+<img alt="alternate text" src="_images/check_Rxyz.jpg" />
+</div>
+<p>Rx + Ry + Rz of Lloyd case. Check the sum (Rx, Ry, Rz) makes closed circles.</p>
 </div>
 
 
@@ -63,10 +88,18 @@
 
 <h3>Navigation</h3>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Git repository</a><ul class="simple">
+<li class="toctree-l1"><a class="reference internal" href="code.html">Git repository</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="method.html">Method</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="method_coordinate.html">S-coordinate System</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="method_ibm.html">IBM Module</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="method_ibm_theory.html">Representation of 3D geometry of obstacles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="method_ibm_code.html">IBM module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="method_ibm_in_main.html">Modification in main program</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Pre-processing</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="method.html">Method</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 </ul>
 
@@ -74,8 +107,12 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="index.html" title="previous chapter">NHWAVE Immersed Boundary Method in s-coordinate</a></li>
-      <li>Next: <a href="method.html" title="next chapter">Method</a></li>
+  <li><a href="method.html">Method</a><ul>
+  <li><a href="method_ibm.html">IBM Module</a><ul>
+      <li>Previous: <a href="method_ibm_in_main.html" title="previous chapter">Modification in main program</a></li>
+      <li>Next: <a href="examples.html" title="next chapter">Examples</a></li>
+  </ul></li>
+  </ul></li>
   </ul></li>
 </ul>
 </div>
@@ -111,7 +148,7 @@
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="_sources/code.rst.txt"
+      <a href="_sources/method_ibm_preprocessing.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

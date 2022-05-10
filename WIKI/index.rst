@@ -15,7 +15,7 @@ Some contents will merge into NHWAVE (Kirby's) GIT Repository and future WIKI pa
     :figclass: align-center
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
    code
    method

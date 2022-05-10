@@ -1,0 +1,216 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Modification in main program &#8212; NHWAVE WIKI 0.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Pre-processing" href="method_ibm_preprocessing.html" />
+    <link rel="prev" title="IBM module" href="method_ibm_code.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="modification-in-main-program">
+<h1>Modification in main program<a class="headerlink" href="#modification-in-main-program" title="Permalink to this headline">¶</a></h1>
+<ol class="arabic simple">
+<li>add input file names in mod_global.F</li>
+</ol>
+<blockquote>
+<div><div class="highlight-rest notranslate"><div class="highlight"><pre><span></span>logical :: OBS_Require_Rxyz=.true.
+character(len=80) :: OBS_MASK_FILE
+character(len=80) :: OBS_Rx_FILE
+character(len=80) :: OBS_Ry_FILE
+character(len=80) :: OBS_Rz_FILE
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li>read input file names and logical parameter in initialize.F</li>
+</ol>
+<blockquote>
+<div><div class="highlight-rest notranslate"><div class="highlight"><pre><span></span>CALL GET_LOGICAL_VAL(OBS_Require_Rxyz,FILE_NAME,&#39;OBS_Require_Rxyz&#39;,line)
+CALL GET_STRING_VAL(OBS_MASK_FILE,FILE_NAME,&#39;OBS_MASK_FILE&#39;,line,ierr)
+IF(OBS_Require_Rxyz)THEN
+  CALL GET_STRING_VAL(OBS_Rx_FILE,FILE_NAME,&#39;OBS_Rx_FILE&#39;,line,ierr)
+  CALL GET_STRING_VAL(OBS_Ry_FILE,FILE_NAME,&#39;OBS_Ry_FILE&#39;,line,ierr)
+  CALL GET_STRING_VAL(OBS_Rz_FILE,FILE_NAME,&#39;OBS_Rz_FILE&#39;,line,ierr)
+ENDIF
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="3">
+<li>make calls in the main program</li>
+</ol>
+<blockquote>
+<div><div class="highlight-rest notranslate"><div class="highlight"><pre><span></span>CALL OBS_INITIALIZATION
+</pre></div>
+</div>
+<div class="highlight-rest notranslate"><div class="highlight"><pre><span></span>! obstacle velocity
+call set_obsvel
+
+! set obstacle flag
+! call set_obsflag ! change to ibm module
+</pre></div>
+</div>
+<div class="highlight-rest notranslate"><div class="highlight"><pre><span></span><span class="gh">subroutine eval_duvw(ISTEP)</span>
+<span class="gh">...</span>
+
+      if(set_flag(i,j,k)==1) then
+        DU(i,j,k) = D(i,j)*obs_u
+      else
+        DU(i,j,k) = DU(i,j,k)+dt*R2(i,j,k)
+      endif
+<span class="cp">...</span>
+<span class="cp">      if(set_flag(i,j,k)==1) then</span>
+<span class="cp">        DV(i,j,k) = D(i,j)*obs_v</span>
+<span class="cp">      else</span>
+<span class="cp">        DV(i,j,k) = DV(i,j,k)+dt*R3(i,j,k)</span>
+<span class="cp">      endif</span>
+<span class="cp">...</span>
+<span class="cp">      if(set_flag(i,j,k)==1) then</span>
+<span class="cp">        DW(i,j,k) = D(i,j)*obs_w</span>
+<span class="cp">      else</span>
+<span class="cp">        DW(i,j,k) = DW(i,j,k)+dt*R4(i,j,k)</span>
+<span class="cp">      endif</span>
+
+<span class="cp">...</span>
+! update velocities for calculating IB forces
+call get_UVW
+
+! calculate forcing at obstacle boundary
+call imm_obs
+
+do k = Kbeg,Kend
+do j = Jbeg,Jend
+do i = Ibeg,Iend
+  if(Mask(i,j)==0) cycle
+
+  if(set_flag(i,j,k)==1) then
+    DU(i,j,k) = D(i,j)*obs_u
+    DV(i,j,k) = D(i,j)*obs_v
+    DW(i,j,k) = D(i,j)*obs_w
+  else
+    DU(i,j,k) = DU(i,j,k)+dt*ObsForceX(i,j,k)
+    DV(i,j,k) = DV(i,j,k)+dt*ObsForceY(i,j,k)
+    DW(i,j,k) = DW(i,j,k)+dt*ObsForceZ(i,j,k)
+  endif
+enddo
+enddo
+enddo
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">NHWAVE WIKI</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="code.html">Git repository</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="method.html">Method</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="method_coordinate.html">S-coordinate System</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="method_ibm.html">IBM Module</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="method_ibm_theory.html">Representation of 3D geometry of obstacles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="method_ibm_code.html">IBM module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Modification in main program</a></li>
+<li class="toctree-l3"><a class="reference internal" href="method_ibm_preprocessing.html">Pre-processing</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="method.html">Method</a><ul>
+  <li><a href="method_ibm.html">IBM Module</a><ul>
+      <li>Previous: <a href="method_ibm_code.html" title="previous chapter">IBM module</a></li>
+      <li>Next: <a href="method_ibm_preprocessing.html" title="next chapter">Pre-processing</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Fengyan Shi.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/method_ibm_in_main.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

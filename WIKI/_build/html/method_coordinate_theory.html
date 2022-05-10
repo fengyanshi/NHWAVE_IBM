@@ -1,0 +1,157 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>New s-Coordinate &#8212; NHWAVE WIKI 0.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Implementation of s-coordinate" href="method_coordinate_implementation.html" />
+    <link rel="prev" title="S-coordinate System" href="method_coordinate.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="new-s-coordinate">
+<h1>New s-Coordinate<a class="headerlink" href="#new-s-coordinate" title="Permalink to this headline">¶</a></h1>
+<p>Let <span class="math notranslate nohighlight">\(s(x'_\alpha,z',t')\)</span> be the replacement for <span class="math notranslate nohighlight">\(z'\)</span> in a new coordinate system <span class="math notranslate nohighlight">\((x,y,s,t)\)</span>, with a range <span class="math notranslate nohighlight">\(0 \leq s \leq 1\)</span> that preserves the boundary locations from the <span class="math notranslate nohighlight">\(\sigma\)</span> coordinate mapping.  Following the same procedure as used in the <span class="math notranslate nohighlight">\(\sigma\)</span> transformation leads to the modified system of equations</p>
+<div class="math notranslate nohighlight">
+\[D_{,t} + ( D u_\alpha )_{,\alpha} + \tilde{\omega}_{,s}  =  \Gamma_s\]</div>
+<div class="math notranslate nohighlight">
+\[ (D u_\alpha)_{,t} + (D u_\alpha u_\beta + \frac{1}{2} gD^2 \delta_{\alpha\beta} )_{,\beta} + (u_\alpha \tilde{\omega})_{,s}
+=  S_{q\alpha} + S_{h\alpha} + u_\alpha \Gamma_s\]</div>
+<div class="math notranslate nohighlight">
+\[(Dw)_{,t} + (D u_\beta w)_{,\beta} + (w\tilde{\omega})_{,s}  =  S_{qz} + w \Gamma_s\]</div>
+<p>in coordinates <span class="math notranslate nohighlight">\((x,y,s, t)\)</span>.  The modified normal velocity <span class="math notranslate nohighlight">\(\tilde{\omega}\)</span> is given by</p>
+<div class="math notranslate nohighlight">
+\[\tilde{\omega} = D ( s_{,t} + u_\alpha s_{,\alpha} + w s_{,z} )\]</div>
+<p>and the inhomogeneous term <span class="math notranslate nohighlight">\(\Gamma_s\)</span> is given by</p>
+<div class="math notranslate nohighlight">
+\[\Gamma_s = D_{,t} + u_\alpha D_{,\alpha} + D ( (s_{,t})_{,s} + u_\alpha (s_{,\alpha})_{,s} + w (s_{,z})_{,s} )\]</div>
+<p>The term <span class="math notranslate nohighlight">\(\Gamma_s\)</span> complicates the set of equations unless we are able to find transformations which reduce <span class="math notranslate nohighlight">\(\Gamma_s\)</span> to zero, as occurs for the original choice <span class="math notranslate nohighlight">\(s = \sigma\)</span>.  Such a choice does not appear to be possible.  A convenient choice which minimizes the impact on the structure of the governing equations is to let <span class="math notranslate nohighlight">\(s\)</span> be specified entirely as a function of <span class="math notranslate nohighlight">\(\sigma\)</span>, considered further in the cases later.  For <span class="math notranslate nohighlight">\(s(\sigma)\)</span> only, we obtain the derivatives</p>
+<div class="math notranslate nohighlight">
+\[s_{,t} = s_{,\sigma} \sigma_{,t}; s_{,\alpha} = s_{,\sigma} \sigma_{,\alpha}; s_{,z} = s_{\sigma} \sigma_{,z}\]</div>
+<p>In this case, the normal velocity is given by <span class="math notranslate nohighlight">\(\tilde{\omega} = s_{,\sigma} \omega\)</span> with <span class="math notranslate nohighlight">\(\omega\)</span> given by (ref{eq10}), and thus <span class="math notranslate nohighlight">\(\tilde{\omega}\)</span> satisfies the same boundary conditions as <span class="math notranslate nohighlight">\(\omega\)</span> at the upper and lower boundaries.  Using the substitution for the derivatives of <span class="math notranslate nohighlight">\(s\)</span> in (ref{eq17}) allows <span class="math notranslate nohighlight">\(\Gamma_s\)</span> to be written as</p>
+<div class="math notranslate nohighlight">
+\[\Gamma_s = \Gamma_\sigma - (\sigma_{,s})_{,\sigma}\tilde{\omega} \label{eq19}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\Gamma_\sigma = 0\)</span> as stated below (ref{eq12}). Further, the combination of the <span class="math notranslate nohighlight">\(s\)</span> derivative term and the residual reduces to</p>
+<div class="math notranslate nohighlight">
+\[\tilde{\omega}_{,s} - \Gamma_s = s_{,\sigma} ( \sigma_{,s} \tilde{\omega} )_{,s}\]</div>
+<p>which is equivalent to the term <span class="math notranslate nohighlight">\(\omega_{,\sigma}\)</span> in the original equation.  The full set of equations, retaining $s$ derivatives and expressions in terms of <span class="math notranslate nohighlight">\(s\)</span> rather than $sigma$, are given by</p>
+<div class="math notranslate nohighlight">
+\[D_{,t} + ( D u_\alpha )_{,\alpha} + s_{,\sigma}(\sigma_{,s}\tilde{\omega})_{,s}  =  0\]</div>
+<div class="math notranslate nohighlight">
+\[(D u_\alpha)_{,t} + (D u_\alpha u_\beta + \frac{1}{2} gD^2 \delta_{\alpha\beta} )_{,\beta} + s_{,\sigma}(\sigma_{,s} u_\alpha \tilde{\omega})_{,s}  =  S_{q\alpha} + S_{h\alpha}\]</div>
+<div class="math notranslate nohighlight">
+\[(Dw)_{,t} + (D u_\beta w)_{,\beta} + s_{,\sigma}(\sigma_{,s} w \tilde{\omega})_{,s}  = S_{qz}\]</div>
+<p>Use of the transformation and retention of <span class="math notranslate nohighlight">\(s\)</span> rather than <span class="math notranslate nohighlight">\(\sigma\)</span> in all expressions leads at most to the introduction of a variable coefficient outside the <span class="math notranslate nohighlight">\(s\)</span>-derivative terms in each equation.  For cases where <span class="math notranslate nohighlight">\(s\)</span> or <span class="math notranslate nohighlight">\(\sigma\)</span> can’t be expressed in terms of each other alone, the details of the transformation and the resulting expressions for <span class="math notranslate nohighlight">\(\tilde{\omega}\)</span> and <span class="math notranslate nohighlight">\(\Gamma_s\)</span> must be worked out for each individual case, as shown in the examples in the Section next.</p>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">NHWAVE WIKI</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="code.html">Git repository</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="method.html">Method</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="method_coordinate.html">S-coordinate System</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">New s-Coordinate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="method_coordinate_implementation.html">Implementation of s-coordinate</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="method_ibm.html">IBM Module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="method.html">Method</a><ul>
+  <li><a href="method_coordinate.html">S-coordinate System</a><ul>
+      <li>Previous: <a href="method_coordinate.html" title="previous chapter">S-coordinate System</a></li>
+      <li>Next: <a href="method_coordinate_implementation.html" title="next chapter">Implementation of s-coordinate</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Fengyan Shi.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/method_coordinate_theory.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
