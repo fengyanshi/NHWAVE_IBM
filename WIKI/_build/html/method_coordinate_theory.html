@@ -39,28 +39,26 @@
 <h1>New s-Coordinate<a class="headerlink" href="#new-s-coordinate" title="Permalink to this headline">¶</a></h1>
 <p>Let <span class="math notranslate nohighlight">\(s(x'_\alpha,z',t')\)</span> be the replacement for <span class="math notranslate nohighlight">\(z'\)</span> in a new coordinate system <span class="math notranslate nohighlight">\((x,y,s,t)\)</span>, with a range <span class="math notranslate nohighlight">\(0 \leq s \leq 1\)</span> that preserves the boundary locations from the <span class="math notranslate nohighlight">\(\sigma\)</span> coordinate mapping.  Following the same procedure as used in the <span class="math notranslate nohighlight">\(\sigma\)</span> transformation leads to the modified system of equations</p>
 <div class="math notranslate nohighlight">
-\[D_{,t} + ( D u_\alpha )_{,\alpha} + \tilde{\omega}_{,s}  =  \Gamma_s\]</div>
-<div class="math notranslate nohighlight">
-\[ (D u_\alpha)_{,t} + (D u_\alpha u_\beta + \frac{1}{2} gD^2 \delta_{\alpha\beta} )_{,\beta} + (u_\alpha \tilde{\omega})_{,s}
-=  S_{q\alpha} + S_{h\alpha} + u_\alpha \Gamma_s\]</div>
-<div class="math notranslate nohighlight">
-\[(Dw)_{,t} + (D u_\beta w)_{,\beta} + (w\tilde{\omega})_{,s}  =  S_{qz} + w \Gamma_s\]</div>
+\[\begin{split}  D_{,t} + ( D u_\alpha )_{,\alpha} + \tilde{\omega}_{,s}  &amp;=  \Gamma_s \\
+ (D u_\alpha)_{,t} + (D u_\alpha u_\beta + \frac{1}{2} gD^2 \delta_{\alpha\beta} )_{,\beta} + (u_\alpha \tilde{\omega})_{,s}
+&amp;=  S_{q\alpha} + S_{h\alpha} + u_\alpha \Gamma_s \\
+ (Dw)_{,t} + (D u_\beta w)_{,\beta} + (w\tilde{\omega})_{,s}  &amp;=  S_{qz} + w \Gamma_s\end{split}\]</div>
 <p>in coordinates <span class="math notranslate nohighlight">\((x,y,s, t)\)</span>.  The modified normal velocity <span class="math notranslate nohighlight">\(\tilde{\omega}\)</span> is given by</p>
-<div class="math notranslate nohighlight">
-\[\tilde{\omega} = D ( s_{,t} + u_\alpha s_{,\alpha} + w s_{,z} )\]</div>
+<div class="math notranslate nohighlight" id="equation-omega">
+<span class="eqno">(1)<a class="headerlink" href="#equation-omega" title="Permalink to this equation">¶</a></span>\[ \tilde{\omega} = D ( s_{,t} + u_\alpha s_{,\alpha} + w s_{,z} )\]</div>
 <p>and the inhomogeneous term <span class="math notranslate nohighlight">\(\Gamma_s\)</span> is given by</p>
-<div class="math notranslate nohighlight">
-\[\Gamma_s = D_{,t} + u_\alpha D_{,\alpha} + D ( (s_{,t})_{,s} + u_\alpha (s_{,\alpha})_{,s} + w (s_{,z})_{,s} )\]</div>
+<div class="math notranslate nohighlight" id="equation-gamma-s">
+<span class="eqno">(2)<a class="headerlink" href="#equation-gamma-s" title="Permalink to this equation">¶</a></span>\[\Gamma_s = D_{,t} + u_\alpha D_{,\alpha} + D ( (s_{,t})_{,s} + u_\alpha (s_{,\alpha})_{,s} + w (s_{,z})_{,s} )\]</div>
 <p>The term <span class="math notranslate nohighlight">\(\Gamma_s\)</span> complicates the set of equations unless we are able to find transformations which reduce <span class="math notranslate nohighlight">\(\Gamma_s\)</span> to zero, as occurs for the original choice <span class="math notranslate nohighlight">\(s = \sigma\)</span>.  Such a choice does not appear to be possible.  A convenient choice which minimizes the impact on the structure of the governing equations is to let <span class="math notranslate nohighlight">\(s\)</span> be specified entirely as a function of <span class="math notranslate nohighlight">\(\sigma\)</span>, considered further in the cases later.  For <span class="math notranslate nohighlight">\(s(\sigma)\)</span> only, we obtain the derivatives</p>
 <div class="math notranslate nohighlight">
 \[s_{,t} = s_{,\sigma} \sigma_{,t}; s_{,\alpha} = s_{,\sigma} \sigma_{,\alpha}; s_{,z} = s_{\sigma} \sigma_{,z}\]</div>
-<p>In this case, the normal velocity is given by <span class="math notranslate nohighlight">\(\tilde{\omega} = s_{,\sigma} \omega\)</span> with <span class="math notranslate nohighlight">\(\omega\)</span> given by (ref{eq10}), and thus <span class="math notranslate nohighlight">\(\tilde{\omega}\)</span> satisfies the same boundary conditions as <span class="math notranslate nohighlight">\(\omega\)</span> at the upper and lower boundaries.  Using the substitution for the derivatives of <span class="math notranslate nohighlight">\(s\)</span> in (ref{eq17}) allows <span class="math notranslate nohighlight">\(\Gamma_s\)</span> to be written as</p>
+<p>In this case, the normal velocity is given by <span class="math notranslate nohighlight">\(\tilde{\omega} = s_{,\sigma} \omega\)</span> with <span class="math notranslate nohighlight">\(\omega\)</span> given by (ref{eq10}), and thus <span class="math notranslate nohighlight">\(\tilde{\omega}\)</span> satisfies the same boundary conditions as <span class="math notranslate nohighlight">\(\omega\)</span> at the upper and lower boundaries.  Using the substitution for the derivatives of <span class="math notranslate nohighlight">\(s\)</span> in <a class="reference internal" href="#equation-gamma-s">(2)</a> allows <span class="math notranslate nohighlight">\(\Gamma_s\)</span> to be written as</p>
 <div class="math notranslate nohighlight">
 \[\Gamma_s = \Gamma_\sigma - (\sigma_{,s})_{,\sigma}\tilde{\omega} \label{eq19}\]</div>
-<p>where <span class="math notranslate nohighlight">\(\Gamma_\sigma = 0\)</span> as stated below (ref{eq12}). Further, the combination of the <span class="math notranslate nohighlight">\(s\)</span> derivative term and the residual reduces to</p>
+<p>where <span class="math notranslate nohighlight">\(\Gamma_\sigma = 0\)</span> as stated below. Further, the combination of the <span class="math notranslate nohighlight">\(s\)</span> derivative term and the residual reduces to</p>
 <div class="math notranslate nohighlight">
 \[\tilde{\omega}_{,s} - \Gamma_s = s_{,\sigma} ( \sigma_{,s} \tilde{\omega} )_{,s}\]</div>
-<p>which is equivalent to the term <span class="math notranslate nohighlight">\(\omega_{,\sigma}\)</span> in the original equation.  The full set of equations, retaining $s$ derivatives and expressions in terms of <span class="math notranslate nohighlight">\(s\)</span> rather than $sigma$, are given by</p>
+<p>which is equivalent to the term <span class="math notranslate nohighlight">\(\omega_{,\sigma}\)</span> in the original equation.  The full set of equations, retaining <span class="math notranslate nohighlight">\(s\)</span> derivatives and expressions in terms of <span class="math notranslate nohighlight">\(s\)</span> rather than <span class="math notranslate nohighlight">\(\sigma\)</span>, are given by</p>
 <div class="math notranslate nohighlight">
 \[D_{,t} + ( D u_\alpha )_{,\alpha} + s_{,\sigma}(\sigma_{,s}\tilde{\omega})_{,s}  =  0\]</div>
 <div class="math notranslate nohighlight">

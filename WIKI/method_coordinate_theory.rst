@@ -5,26 +5,22 @@ Let :math:`s(x'_\alpha,z',t')` be the replacement for :math:`z'` in a new coordi
 
 .. math::
 
-   D_{,t} + ( D u_\alpha )_{,\alpha} + \tilde{\omega}_{,s}  =  \Gamma_s  
-
-.. math::
-
+   D_{,t} + ( D u_\alpha )_{,\alpha} + \tilde{\omega}_{,s}  &=  \Gamma_s \\ 
   (D u_\alpha)_{,t} + (D u_\alpha u_\beta + \frac{1}{2} gD^2 \delta_{\alpha\beta} )_{,\beta} + (u_\alpha \tilde{\omega})_{,s}
- =  S_{q\alpha} + S_{h\alpha} + u_\alpha \Gamma_s 
-
-.. math::
-
-  (Dw)_{,t} + (D u_\beta w)_{,\beta} + (w\tilde{\omega})_{,s}  =  S_{qz} + w \Gamma_s
+ &=  S_{q\alpha} + S_{h\alpha} + u_\alpha \Gamma_s \\
+  (Dw)_{,t} + (D u_\beta w)_{,\beta} + (w\tilde{\omega})_{,s}  &=  S_{qz} + w \Gamma_s
 
 in coordinates :math:`(x,y,s, t)`.  The modified normal velocity :math:`\tilde{\omega}` is given by
 
 .. math::
+   :label: omega
 
     \tilde{\omega} = D ( s_{,t} + u_\alpha s_{,\alpha} + w s_{,z} )
 
 and the inhomogeneous term :math:`\Gamma_s` is given by
 
 .. math::
+   :label: gamma_s
 
    \Gamma_s = D_{,t} + u_\alpha D_{,\alpha} + D ( (s_{,t})_{,s} + u_\alpha (s_{,\alpha})_{,s} + w (s_{,z})_{,s} )
 
@@ -35,18 +31,18 @@ The term :math:`\Gamma_s` complicates the set of equations unless we are able to
 
    s_{,t} = s_{,\sigma} \sigma_{,t}; s_{,\alpha} = s_{,\sigma} \sigma_{,\alpha}; s_{,z} = s_{\sigma} \sigma_{,z}
 
-In this case, the normal velocity is given by :math:`\tilde{\omega} = s_{,\sigma} \omega` with :math:`\omega` given by (\ref{eq10}), and thus :math:`\tilde{\omega}` satisfies the same boundary conditions as :math:`\omega` at the upper and lower boundaries.  Using the substitution for the derivatives of :math:`s` in (\ref{eq17}) allows :math:`\Gamma_s` to be written as
+In this case, the normal velocity is given by :math:`\tilde{\omega} = s_{,\sigma} \omega` with :math:`\omega` given by (\ref{eq10}), and thus :math:`\tilde{\omega}` satisfies the same boundary conditions as :math:`\omega` at the upper and lower boundaries.  Using the substitution for the derivatives of :math:`s` in :eq:`gamma_s` allows :math:`\Gamma_s` to be written as
 
 .. math::
 
    \Gamma_s = \Gamma_\sigma - (\sigma_{,s})_{,\sigma}\tilde{\omega} \label{eq19}
 
-where :math:`\Gamma_\sigma = 0` as stated below (\ref{eq12}). Further, the combination of the :math:`s` derivative term and the residual reduces to
+where :math:`\Gamma_\sigma = 0` as stated below. Further, the combination of the :math:`s` derivative term and the residual reduces to
 
 .. math::
    \tilde{\omega}_{,s} - \Gamma_s = s_{,\sigma} ( \sigma_{,s} \tilde{\omega} )_{,s}
 
-which is equivalent to the term :math:`\omega_{,\sigma}` in the original equation.  The full set of equations, retaining $s$ derivatives and expressions in terms of :math:`s` rather than $\sigma$, are given by
+which is equivalent to the term :math:`\omega_{,\sigma}` in the original equation.  The full set of equations, retaining :math:`s` derivatives and expressions in terms of :math:`s` rather than :math:`\sigma`, are given by
 
 .. math::
    D_{,t} + ( D u_\alpha )_{,\alpha} + s_{,\sigma}(\sigma_{,s}\tilde{\omega})_{,s}  =  0 
