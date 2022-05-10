@@ -16,7 +16,7 @@ z=[0:l-1]*dz;
 
 [X2d Y2d]=meshgrid(x,y);
 
-[X,Y,Z]=meshgrid(x,y,z);
+[XXX,YYY,ZZZ]=meshgrid(x,y,z);
 
 %nst=input('start= ');
 nst=500;
@@ -34,41 +34,48 @@ set(gcf,'units','inches','paperunits','inches','papersize', [wid len],'position'
 clf
 colormap jet
 
-for kt=1:length(nfile);
+kt=1;
 
 fnum=sprintf('%.5d',nfile(kt));
 
 u=load([fdir 'u_' fnum]);
 v=load([fdir 'v_' fnum]);
+w=load([fdir 'w_' fnum]);
 u3d1=reshape(u,[n,l,m]);
 v3d1=reshape(v,[n,l,m]);
+w3d1=reshape(w,[n,l,m]);
 
-u3d=permute(u3d1,[1 3 2]);
-v3d=permute(v3d1,[1 3 2]);
+U3d=permute(u3d1,[1 3 2]);
+V3d=permute(v3d1,[1 3 2]);
+W3d=permute(w3d1,[1 3 2]);
 
 u2d=squeeze(u3d1(:,l,:));
 v2d=squeeze(v3d1(:,l,:));
 [vort vort1]=curl(X2d,Y2d,u2d,v2d);
 
-pcolor(X2d,Y2d,vort),shading flat
-cbar=colorbar;
-set(get(cbar,'ylabel'),'String','vertical vorticity (1/s)')
-caxis([-1 1])
-sk=8;
-sc=1.0;
-hold on
-quiver(X2d(1:sk:end,1:sk:end),Y2d(1:sk:end,1:sk:end),u2d(1:sk:end,1:sk:end)*sc,v2d(1:sk:end,1:sk:end)*sc,0)
-%title(['time= ' num2str(nfile(kt)) ' s'])
-vb=[-0.05 0.04 0.03 0.02 0.01];
-contour(X2d,Y2d,-dep,'Color','k','LineWidth',1);
-xlabel('x(m)')
-ylabel('y(m)')
+%[dudx,dudy,dudz]=gradient(U3d,dx,dy,dz);
+%[dvdx,dvdy,dvdz]=gradient(V3d,dx,dy,dz);
+%[dwdx,dwdy,dwdz]=gradient(W3d,dx,dy,dz);
 
-end
+%q=-0.5*(dudx.^2+dvdy.^2+dwdz.^2)-dudy.*dvdx-dudz.*dwdx-dvdz.*dwdy;
 
-fname=['./plots/' 'vort_' fnum];
+vw=[36 90];
 
-print('-djpeg100', fname)
+[faces,verts,colors]=isosurface(XXX,YYY,ZZZ,q,0.001,ZZZ);
+patch('Vertices', verts, 'Faces', faces, ... 
+    'FaceVertexCData', colors, ... 
+    'FaceColor','interp', ... 
+    'edgecolor', 'none')
+view(vw)
+camlight; lighting gouraud
+grid
+xlabel('x (m) ')
+ylabel('y (m) ')
+
+
+fname=['./plots/' 'q_' fnum];
+
+%print('-djpeg100', fname)
 
 
 
