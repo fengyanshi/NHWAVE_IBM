@@ -31,7 +31,13 @@ The term :math:`\Gamma_s` complicates the set of equations unless we are able to
 
    s_{,t} = s_{,\sigma} \sigma_{,t}; s_{,\alpha} = s_{,\sigma} \sigma_{,\alpha}; s_{,z} = s_{\sigma} \sigma_{,z}
 
-In this case, the normal velocity is given by :math:`\tilde{\omega} = s_{,\sigma} \omega` with :math:`\omega` given by (\ref{eq10}), and thus :math:`\tilde{\omega}` satisfies the same boundary conditions as :math:`\omega` at the upper and lower boundaries.  Using the substitution for the derivatives of :math:`s` in :eq:`gamma_s` allows :math:`\Gamma_s` to be written as
+In this case, the normal velocity is given by :math:`\tilde{\omega} = s_{,\sigma} \omega` with :math:`\omega` given by
+
+.. math::
+
+   \omega = D ( \sigma_{,t} + u_\alpha \sigma_{,\alpha} + w \sigma_{,z} ),
+
+and thus :math:`\tilde{\omega}` satisfies the same boundary conditions as :math:`\omega` at the upper and lower boundaries.  Using the substitution for the derivatives of :math:`s` in :eq:`gamma_s` allows :math:`\Gamma_s` to be written as
 
 .. math::
 
