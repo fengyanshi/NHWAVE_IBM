@@ -65,7 +65,7 @@
 #  NHWAVE Source Code.
 #--------------------------------------------------------------------------
 
-MODS  = mod_global.F	mod_util.F mod_immersed.F
+MODS  = mod_global.F	mod_util.F mod_immersed.F mod_coordinate.F
 
 MAIN  = nhwave.F initialize.F two_layer_slide.F fluid_slide.F deformable_slide.F \
         source_terms.F waves.F pressure.F

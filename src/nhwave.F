@@ -553,6 +553,7 @@
 !    Last update: 25/12/2010, Gangfeng Ma
 !----------------------------------------------
      use global
+     USE COORDINATE_MODULE
 # if defined (OBSTACLE)
      USE IBM_MODULE
 # endif
@@ -6516,94 +6517,6 @@ endif
      enddo
      
      end subroutine sponge_damping
-
- 
-     subroutine sigma_transform
-!--------------------------------------------------- 
-!    Calculate sigma transformation coefficient
-!    Called by       
-!      eval_duvw
-!    Last update: 29/03/2011, Gangfeng Ma
-!    04/13/2022, add generalized s coordinate calculation, shi
-!--------------------------------------------------
-     use global, only: Zero,DelxSc,DelySc,D,DelxH,DelyH, &
-                       DelxEta,DelyEta,sigc,Mloc,Nloc,Kloc, &
-                       DelxSl,DelySl,Kloc1,sig
-# if defined (S_COORDINATE)
-     USE GLOBAL, ONLY : Surf_Mask, Surf_Mask_top, Surf_Mask_bottom, &
-                        Eta,NUM_TOPLAYER
-# endif
-     implicit none
-     integer :: i,j,k
-
-# if defined (S_COORDINATE)
-     REAL(SP),DIMENSION(Mloc,Nloc,Kloc) :: z_center
-     REAL(SP),DIMENSION(Mloc,Nloc,Kloc1) :: z_face
-# endif
-
-! standard sigma-coordinate has
-!      d_sigma/dx = 1/D*(1-sigma)dh/dx - 1/D*sigma d_eta/dx
-! for general sigma-coordinate
-!      d sigma/dx= -dz/dx / dz/d_sigma
-!
-
-
-     DelxSc = Zero
-     DelySc = Zero
-! ------------ s-coordinate
-# if defined (S_COORDINATE)
-
-!    z
-     DO J=1,Nloc
-     DO I=1,Mloc
-        DO K=1,Kloc1
-          z_face(I,J,K)=-Hc(I,J)+(k-1.0)*D(I,J)/(Kloc1-1.0)
-        ENDDO
-        DO K=1,Kloc
-          z_center(I,J,K)=0.5*(z_face(I,J,K)+z_face(I,J,K+1))
-        ENDDO
-       ENDIF ! end surf masks 
-     ENDDO
-     ENDDO
-    
-     DO K=1,Kloc
-     DO J=1,Nloc
-     Do I=1,Mloc
-       DelxSc(I,J,K)=-(z_center(I+1,J,K)-z_center(I-1,J,K))/dx/2.0_SP &
-                     /(z_face(I,J,K+1)-z_face(I,J,K))*dsig(K)
-       DelySc(I,J,K)=-(z_center(I,J+1,K)-z_center(I,J-1,K))/dy/2.0_SP &
-                     /(z_face(I,J,K+1)-z_face(I,J,K))*dsig(K)
-     ENDDO
-     ENDDO
-     ENDDO
-
-! ------------
-# else
-
-     do k = 1,Kloc
-     do j = 1,Nloc
-     do i = 1,Mloc
-       DelxSc(i,j,k) = (1.0-sigc(k))/D(i,j)*DelxH(i,j)-sigc(k)/D(i,j)*DelxEta(i,j)
-       DelySc(i,j,k) = (1.0-sigc(k))/D(i,j)*DelyH(i,j)-sigc(k)/D(i,j)*DelyEta(i,j)
-     enddo
-     enddo
-     enddo
-# endif
-  ! end s-coordinate
-
-     ! added by Morteza
-     DelxSl = Zero
-     DelySl = Zero
-     do k = 1,Kloc1
-     do j = 1,Nloc
-     do i = 1,Mloc
-       DelxSl(i,j,k) = (1.-sig(k))/D(i,j)*DelxH(i,j)-sig(k)/D(i,j)*DelxEta(i,j)
-       DelySl(i,j,k) = (1.-sig(k))/D(i,j)*DelyH(i,j)-sig(k)/D(i,j)*DelyEta(i,j)
-     enddo
-     enddo
-     enddo
-
-     end subroutine sigma_transform
 
 
      subroutine eval_turb(ISTEP)
