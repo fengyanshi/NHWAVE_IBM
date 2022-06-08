@@ -37,9 +37,8 @@
             
   <div class="section" id="implementation-of-s-coordinate">
 <h1>Implementation of s-coordinate<a class="headerlink" href="#implementation-of-s-coordinate" title="Permalink to this headline">¶</a></h1>
-<ol class="arabic simple">
-<li>The code coordinate module was in mod_coordinate.F. The module contains the original sigma-coordinate system in Ma et al 2012 and modification in Derakhti et al. 2016 a,b.</li>
-</ol>
+<p><strong>1) Module structure</strong></p>
+<p>The code coordinate module was in mod_coordinate.F. The module contains the original sigma-coordinate system in Ma et al 2012 and modification in Derakhti et al. 2016 a,b., the following is the model structure:</p>
 <blockquote>
 <div><div class="highlight-rest notranslate"><div class="highlight"><pre><span></span>MODULE COORDINATE_MODULE
 USE GLOBAL, ONLY: Zero,DelxSc,DelySc,D,DelxH,DelyH, &amp;
@@ -51,19 +50,42 @@ SAVE
 CONTAINS
 
   SUBROUTINE COORDINATE_INITIALIZATION
-
+    <span class="o">|</span> ...
   END SUBROUTINE COORDINATE_INITIALIZATION
 
   SUBROUTINE SIGMA_TRANSFORM
-
+    <span class="o">|</span> ...
   END SUBROUTINE SIGMA_TRANSFORM
+
+  SUBROUTINE GAMMA_s
+    <span class="o">|</span> ...
+  END SUBROUTINE GAMMA_s
+
+  SUBROUTINE MEAN_VELOCITY
+    <span class="o">|</span> ...
+  END SUBROUTINE MEAN_VELOCITY
+
+  SUBROUTINE GET_OMEGA(R1)
+    <span class="o">|</span> ...
+  END SUBROUTINE GET_OMEGA(R1)
+
 
 END MODULE COORDINATE_MODULE
 </pre></div>
 </div>
 </div></blockquote>
-<ol class="arabic simple" start="2">
-<li></li>
+<p><strong>2) Procedures</strong></p>
+<ol class="loweralpha simple">
+<li>move the calculation of <span class="math notranslate nohighlight">\(dsig\)</span> to  SUBROUTINE COORDINATE_INITIALIZATION to generalize s-coordinate. NOTE: we still keep <span class="math notranslate nohighlight">\(dsig\)</span> but for a generic <span class="math notranslate nohighlight">\(\Delta s\)</span>. In this way, the code for solving the continuity equation does not need to change.</li>
+<li>move subroutine get_omega to SUBROUTINE GET_OMEGA in MOD_COORDINATE.F to make <span class="math notranslate nohighlight">\(\omega\)</span> to the generic <span class="math notranslate nohighlight">\(\tilde{\omega}\)</span></li>
+<li>calculate depth-averaged velocity <span class="math notranslate nohighlight">\(\bar{u}_\alpha\)</span> in SUBROUTINE MEAN_VELOCITY</li>
+<li>calculate <span class="math notranslate nohighlight">\(\Gamma_s\)</span> in SUBROUTINE GAMMA_s based on</li>
+</ol>
+<div class="math notranslate nohighlight">
+\[\Gamma_s = [D(u_\alpha - \bar{u}_\alpha)]_{,\alpha} + \tilde{\omega}_{,s}\]</div>
+<ol class="loweralpha simple" start="5">
+<li>in SUBROUTINE eval_duvw, add <span class="math notranslate nohighlight">\(\Gamma_s\)</span> as an extra term in the momentum equations. Specifically, add <span class="math notranslate nohighlight">\(u_{\alpha} \Gamma_s\)</span> and <span class="math notranslate nohighlight">\(w \Gamma_s\)</span> in <span class="math notranslate nohighlight">\(R2\)</span>, which is combination of advection, Coriolis, horizontal diffusion and extra forcing terms.</li>
+<li>add <span class="math notranslate nohighlight">\(Gamma_s\)</span> term in the 3D mass conservation equation, resulting in an extra term on RHS of the Poisson equation. Following the previous approach to treat <span class="math notranslate nohighlight">\(u, v, w\)</span> terms, we use explicit scheme. The <span class="math notranslate nohighlight">\(Gamma_s\)</span> is implemented in SUBROUTINE generate_coef_rhs in pressure.F</li>
 </ol>
 </div>
 
