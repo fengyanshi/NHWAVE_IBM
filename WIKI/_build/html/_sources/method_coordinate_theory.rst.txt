@@ -22,10 +22,22 @@ and the inhomogeneous term :math:`\Gamma_s` is given by
 .. math::
    :label: gamma_s
 
-   \Gamma_s = D_{,t} + u_\alpha D_{,\alpha} + D ( (s_{,t})_{,s} + u_\alpha (s_{,\alpha})_{,s} + w (s_{,z})_{,s} )
+   \Gamma_s = D_{,t} + u_\alpha D_{,\alpha} + D [ (s_{,t})_{,s} + u_\alpha (s_{,\alpha})_{,s} + w (s_{,z})_{,s} ]
 
+or 
 
-There are three choices of :math:`s` coordinate system in the model.
+.. math::
+   :label: gamma_s1
+
+   \Gamma_s = & D_{,t} + u_\alpha D_{,\alpha} + \tilde{\omega}_{,s} - D (u_{\alpha,s} s_{,\alpha} + w_{,s} s_{,z}) \\
+       =& D_{,t} + (u_\alpha D)_{,\alpha} + \tilde{\omega}_{,s}
+
+To evaluate :math:`\Gamma_s` at the same time level, replace :math:`D_{,t}` with the divergence of mass flux based on the continuity equation :math:`D_{,t} = - D \bar{u}_{\alpha,\alpha}`, where :math:`\bar{u}_\alpha` represents the depth averaged velocity,
+
+.. math::
+   \Gamma_s = [D(u_\alpha - \bar{u}_\alpha)]_{,\alpha} + \tilde{\omega}_{,s} 
+
+There are two choices of :math:`s` coordinate system in the model.
 
 **1) The original** :math:`\sigma` **coordinate**
 
@@ -41,18 +53,7 @@ and
 
    \tilde{\omega} = \omega = D (\sigma_{,t} + u_\alpha \sigma_{,\alpha} + w \sigma_{,z}).
 
-**2)** :math:`s = s(\sigma)`
+**2) General cases**
 
-The choice that :math:`s` is a function of :math:`\sigma` only is convenient in terms of  minimizing the impact on the structure of the governing equations. In this case, the governing equations, retaining :math:`s` derivatives and expressions in terms of :math:`s` rather than :math:`\sigma`, are given by
-
-.. math::
-   D_{,t} + ( D u_\alpha )_{,\alpha} + s_{,\sigma}(\sigma_{,s}\tilde{\omega})_{,s} & =  0 \\
-   (D u_\alpha)_{,t} + (D u_\alpha u_\beta + \frac{1}{2} gD^2 \delta_{\alpha\beta} )_{,\beta} + s_{,\sigma}(\sigma_{,s} u_\alpha \tilde{\omega})_{,s} & =  S_{q\alpha} + S_{h\alpha} \\
-  (Dw)_{,t} + (D u_\beta w)_{,\beta} + s_{,\sigma}(\sigma_{,s} w \tilde{\omega})_{,s} & = S_{qz}
-
-Use of the transformation and retention of :math:`s` rather than :math:`\sigma` in all expressions leads at most to the introduction of a variable coefficient outside the :math:`s`-derivative terms in each equation. 
-
-**3) General cases**
-
-For cases where :math:`s` or :math:`\sigma` can't be expressed in terms of each other alone, the details of the transformation and the resulting expressions for :math:`\tilde{\omega}` and :math:`\Gamma_s` must be worked out for each individual case. 
+For general cases, the details of the transformation and the resulting expressions for :math:`\tilde{\omega}` and :math:`\Gamma_s` must be worked out for each individual case. 
 
