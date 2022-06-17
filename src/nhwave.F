@@ -543,7 +543,7 @@
 
      return
      end subroutine projection_corrector
-     
+
 
      subroutine eval_duvw(ISTEP)
 !-----------------------------------------------
@@ -646,7 +646,7 @@
      ! sigma transformation coefficient                                                  
      call sigma_transform
 
-     ! prepare right-hand side terms
+     ! prepare right-hand side terms, add GAMMAS, ROXSI
      R2 = Zero
      do i = Ibeg,Iend
      do j = Jbeg,Jend
@@ -654,7 +654,8 @@
        do k = Kbeg,Kend
          R2(i,j,k) = -1.0/dx*(Fx(i+1,j,k)-Fx(i,j,k))-1.0/dy*(Fy(i,j+1,k)-Fy(i,j,k)) &
                 -1.0/dsig(k)*(Fz(i,j,k+1)-Fz(i,j,k))+fcor*DV(i,j,k)+DRhoX(i,j,k)+  &
-                SourceX(i,j)+Diffxx(i,j,k)+Diffxy(i,j,k)+ExtForceX(i,j,k)
+                SourceX(i,j)+Diffxx(i,j,k)+Diffxy(i,j,k)+ExtForceX(i,j,k) &
+                + GAMMA_s(I,J,K)*U(I,J,K)
 # if defined (CORALREEF)
          if(Hc(i,j)<0.12) then
            Umag = sqrt(U(i,j,k)**2+V(i,j,k)**2+W(i,j,k)**2)
@@ -672,7 +673,8 @@
        do k = Kbeg,Kend
          R3(i,j,k) = -1.0/dx*(Gx(i+1,j,k)-Gx(i,j,k))-1.0/dy*(Gy(i,j+1,k)-Gy(i,j,k)) &   
                         -1.0/dsig(k)*(Gz(i,j,k+1)-Gz(i,j,k))-fcor*DU(i,j,k)+DRhoY(i,j,k)  &
-                        +SourceY(i,j)+Diffyx(i,j,k)+Diffyy(i,j,k)+ExtForceY(i,j,k)
+                        +SourceY(i,j)+Diffyx(i,j,k)+Diffyy(i,j,k)+ExtForceY(i,j,k) &
+                        + GAMMA_s(I,J,K)*V(I,J,K)
 # if defined (CORALREEF)
          if(Hc(i,j)<0.12) then
            Umag = sqrt(U(i,j,k)**2+V(i,j,k)**2+W(i,j,k)**2)
@@ -689,7 +691,8 @@
        if(Mask(i,j)==0) cycle
        do k = Kbeg,Kend
          R4(i,j,k) = -1.0/dx*(Hx(i+1,j,k)-Hx(i,j,k))-1.0/dy*(Hy(i,j+1,k)-Hy(i,j,k)) &  
-                        -1.0/dsig(k)*(Hz(i,j,k+1)-Hz(i,j,k))+Diffzx(i,j,k)+Diffzy(i,j,k)
+                        -1.0/dsig(k)*(Hz(i,j,k+1)-Hz(i,j,k))+Diffzx(i,j,k)+Diffzy(i,j,k) &
+                        + GAMMA_s(I,J,K)*W(I,J,K)
 # if defined (CORALREEF)
          if(Hc(i,j)<0.12) then
            Umag = sqrt(U(i,j,k)**2+V(i,j,k)**2+W(i,j,k)**2)
@@ -1276,8 +1279,10 @@
      ! boundary conditions and final velocity
      call get_UVW  
 
-     ! update Omega
+     ! update Omega, R1 is D,t or eta,t if h,t is zero
+
      call get_Omega(R1)
+     CALL CALCULATE_GAMMAS(R1)
 
      ! if running hydrostatic mode, replace vertical velocity
      ! in fact, W is useless. Only for output
@@ -1419,246 +1424,6 @@
      endif
 
      end subroutine interpolate_velocity_to_faces
-
-
-     subroutine get_Omega(R1)
-!-----------------------------------------------
-!    Obtain vertical velocity in sigma-coord.
-!    Called by 
-!       eval_duvw
-!    Last update: 30/08/2013, Gangfeng Ma
-!-----------------------------------------------
-     use global
-     implicit none
-     integer :: i,j,k
-     real(SP), dimension(Mloc,Nloc), intent(in) :: R1
-     real(SP), dimension(:,:,:), allocatable :: D3xL,D3xR,D3yL,D3yR
-
-     ! reconstruct flux using new velocities
-     call delxFun_2D(Eta,DelxEta)
-     call delyFun_2D(Eta,DelyEta)
-     call delxFun_3D(U,DelxU)
-     call delxFun_3D(V,DelxV)
-     call delyFun_3D(U,DelyU)
-     call delyFun_3D(V,DelyV)
-     call delxFun_3D(DU,DelxDU)
-     call delxFun_3D(DV,DelxDV)
-     call delyFun_3D(DU,DelyDU)
-     call delyFun_3D(DV,DelyDV)
-
-     call construct_2D_x(Eta,DelxEta,EtaxL,EtaxR)
-     call construct_2D_y(Eta,DelyEta,EtayL,EtayR)
-     call construct_3D_x(U,DelxU,UxL,UxR)
-     call construct_3D_x(V,DelxV,VxL,VxR)
-     call construct_3D_y(U,DelyU,UyL,UyR)
-     call construct_3D_y(V,DelyV,VyL,VyR)
-     call construct_3D_x(DU,DelxDU,DUxL,DUxR)
-     call construct_3D_x(DV,DelxDV,DVxL,DVxR)
-     call construct_3D_y(DU,DelyDU,DUyL,DUyR)
-     call construct_3D_y(DV,DelyDV,DVyL,DVyR)
-
-	
-     !set flux to zero in x at wet-dry front (Cheng)
-     do j = Jbeg,Jend
-     do i = Ibeg,Iend1
-       DxL(i,j) = EtaxL(i,j)+hfx(i,j)
-       DxR(i,j) = EtaxR(i,j)+hfx(i,j)
-     enddo
-     enddo
-	 DxL = max(DxL,MinDep)
-	 DxR = max(DxR,MinDep)
-     do k = Kbeg,Kend
-     do j = Jbeg,Jend
-     do i = Ibeg,Iend
- 	   if (Mask(i,j)==1.and.Mask(i+1,j)==0) then
-	     EtaxL(i+1,j) = Eta(i,j)
-         DxL(i+1,j) = D(i,j)
-         DUxL(i+1,j,k) = Zero
- 	   elseif (Mask(i,j)==1.and.Mask(i-1,j)==0) then
-	     EtaxR(i,j) = Eta(i,j)
-         DxR(i,j) = D(i,j)
-         DUxR(i,j,k) = Zero
- 	   elseif (Mask(i,j)==0) then
-         EtaxL(i+1,j) = Eta(i,j)	   
-         DxL(i+1,j) = D(i,j)
-         DUxL(i+1,j,k) = Zero
- 		 DVxL(i+1,j,k) = Zero
-		 EtaxR(i,j) = Eta(i,j)
-         DxR(i,j) = D(i,j)
-         DUxR(i,j,k) = Zero
-       endif   
-     enddo
-     enddo
-     enddo
-     do k = Kbeg,Kend
-     do j = Jbeg,Jend
-     do i = Ibeg,Iend1
-       ExL(i,j,k) = DUxL(i,j,k)
-       ExR(i,j,k) = DUxR(i,j,k)
-     enddo
-     enddo
-     enddo
-	 
-     !set flux to zero in y at wet-dry front (Cheng)
-     do j = Jbeg,Jend1
-     do i = Ibeg,Iend
-       DyL(i,j) = EtayL(i,j)+hfy(i,j)
-       DyR(i,j) = EtayR(i,j)+hfy(i,j)
-     enddo
-     enddo
-	 DyL = max(DyL,MinDep)
-	 DyR = max(DyR,MinDep)
-     do k = Kbeg,Kend
-     do j = Jbeg,Jend
-     do i = Ibeg,Iend
-	   if (Mask(i,j)==1.and.Mask(i,j+1)==0) then
-	     EtayL(i,j+1) = Eta(i,j)
-         DyL(i,j+1) = D(i,j)
-		 DVyL(i,j+1,k) = Zero
-	   elseif (Mask(i,j)==1.and.Mask(i,j-1)==0) then
-	     EtayR(i,j) = Eta(i,j)
-         DyR(i,j) = D(i,j)
-		 DVyR(i,j,k) = Zero
-	   elseif (Mask(i,j)==0) then	
-         EtayL(i,j+1) = Eta(i,j)
-         DyL(i,j+1) = D(i,j)
-		 DVyL(i,j+1,k) = Zero
-         EtayR(i,j) = Eta(i,j)
-         DyR(i,j) = D(i,j)
-		 DVyR(i,j,k) = Zero
-       endif   
-     enddo
-     enddo
-     enddo
-     do k = Kbeg,Kend
-     do j = Jbeg,Jend1
-     do i = Ibeg,Iend
-       EyL(i,j,k) = DVyL(i,j,k)
-       EyR(i,j,k) = DVyR(i,j,k)
-     enddo
-     enddo
-     enddo   	 
-
-     allocate(D3xL(Mloc1,Nloc,Kloc))
-     allocate(D3xR(Mloc1,Nloc,Kloc))
-     do k = 1,Kloc
-     do j = 1,Nloc
-     do i = 1,Mloc1
-       D3xL(i,j,k) = DxL(i,j) !revised the flux by Cheng
-       D3xR(i,j,k) = DxR(i,j)
-     enddo
-     enddo
-     enddo
-
-     allocate(D3yL(Mloc,Nloc1,Kloc))
-     allocate(D3yR(Mloc,Nloc1,Kloc))
-     do k = 1,Kloc
-     do j = 1,Nloc1
-     do i = 1,Mloc
-       D3yL(i,j,k) = DyL(i,j)
-       D3yR(i,j,k) = DyR(i,j)
-     enddo
-     enddo
-     enddo
-
-     call wave_speed
-
-     call HLL(Mloc1,Nloc,Kloc,SxL,SxR,ExL,ExR,D3xL,D3xR,Ex)
-     call HLL(Mloc,Nloc1,Kloc,SyL,SyR,EyL,EyR,D3yL,D3yR,Ey)
-
-     ! left and right side
-# if defined (PARALLEL)
-     if(n_west.eq.MPI_PROC_NULL) then
-# endif
-     do j = Jbeg,Jend
-     do k = Kbeg,Kend
-       if(Bc_X0==1.or.Bc_X0==2.or.Bc_X0==5) then ! added by Cheng for wall friction
-         Ex(Ibeg,j,k) = Zero
-       elseif(Bc_X0==3) then
-         Ex(Ibeg,j,k) = Din_X0(j)*Uin_X0(j,k)
-       endif
-     enddo
-     enddo
-# if defined (PARALLEL)
-     endif
-# endif
-
-# if defined (PARALLEL)
-     if(n_east.eq.MPI_PROC_NULL) then
-# endif
-     do j = Jbeg,Jend
-     do k = Kbeg,Kend
-       if(Bc_Xn==1.or.Bc_Xn==2.or.Bc_Xn==5) then ! added by Cheng for wall friction
-         Ex(Iend1,j,k) = Zero
-       elseif(Bc_Xn==3) then
-         Ex(Iend1,j,k) = Din_Xn(j)*Uin_Xn(j,k)
-       endif
-     enddo
-     enddo
-# if defined (PARALLEL)
-     endif
-# endif
-
-     ! front and back side  
-# if defined (PARALLEL)
-     if(n_suth.eq.MPI_PROC_NULL) then
-# endif
-     do i = Ibeg,Iend
-     do k = Kbeg,Kend
-       if(Bc_Y0==1.or.Bc_Y0==2.or.Bc_Y0==5) then ! added by Cheng for wall friction
-         Ey(i,Jbeg,k) = Zero
-       endif
-     enddo
-     enddo
-# if defined (PARALLEL)
-     endif
-# endif
-
-# if defined (PARALLEL)
-     if(n_nrth.eq.MPI_PROC_NULL) then
-# endif
-     do i = Ibeg,Iend
-     do k = Kbeg,Kend
-       if(Bc_Yn==1.or.Bc_Yn==2.or.Bc_Yn==5) then ! added by Cheng for wall friction
-         Ey(i,Jend1,k) = Zero
-       endif
-     enddo
-     enddo
-# if defined (PARALLEL)
-     endif
-# endif
-
-     ! update Omega
-     Omega = zero
-     do i = Ibeg,Iend
-     do j = Jbeg,Jend
-     do k = Kbeg+1,Kend1
-       Omega(i,j,k) = Omega(i,j,k-1)-dsig(k-1)*  &
-          (R1(i,j)+(Ex(i+1,j,k-1)-Ex(i,j,k-1))/dx+(Ey(i,j+1,k-1)-Ey(i,j,k-1))/dy)                      
-       if(Mask(i,j)==0) Omega(i,j,k) = zero
-     enddo
-     enddo
-     enddo
-
-!     ! adjust omega to make omega=zero at free surface
-!     do i = Ibeg,Iend
-!     do j = Jbeg,Jend
-!       if(abs(Omega(i,j,Kend1))>1.e-8) then
-!         do k = Kbeg+1,Kend1
-!           Omega(i,j,k) = Omega(i,j,k)-  &
-!              float(k-Kbeg)/float(Kend-Kbeg+1)*Omega(i,j,Kend1)                                        
-!         enddo
-!       endif
-!     enddo
-!     enddo
-
-     deallocate(D3xL)
-     deallocate(D3xR)
-     deallocate(D3yL)
-     deallocate(D3yR)
-
-     return
-     end subroutine get_Omega
 
 
      subroutine get_UVW
@@ -14466,5 +14231,241 @@ END SUBROUTINE OneWayCoupling
 ! end nesting
 
 
+     SUBROUTINE CALCULATE_GAMMAS(R1)
+
+!-----------------------------------------------
+!    Obtain vertical velocity in sigma-coord.
+!    Called by 
+!       eval_duvw
+!-----------------------------------------------
+     use global
+     implicit none
+     integer :: i,j,k
+     real(SP), dimension(Mloc,Nloc), intent(in) :: R1
+     real(SP), dimension(:,:,:), allocatable :: D3xL,D3xR,D3yL,D3yR
+
+     ! reconstruct flux using new velocities
+     call delxFun_2D(Eta,DelxEta)
+     call delyFun_2D(Eta,DelyEta)
+     call delxFun_3D(U,DelxU)
+     call delxFun_3D(V,DelxV)
+     call delyFun_3D(U,DelyU)
+     call delyFun_3D(V,DelyV)
+     call delxFun_3D(DU,DelxDU)
+     call delxFun_3D(DV,DelxDV)
+     call delyFun_3D(DU,DelyDU)
+     call delyFun_3D(DV,DelyDV)
+
+     call construct_2D_x(Eta,DelxEta,EtaxL,EtaxR)
+     call construct_2D_y(Eta,DelyEta,EtayL,EtayR)
+     call construct_3D_x(U,DelxU,UxL,UxR)
+     call construct_3D_x(V,DelxV,VxL,VxR)
+     call construct_3D_y(U,DelyU,UyL,UyR)
+     call construct_3D_y(V,DelyV,VyL,VyR)
+     call construct_3D_x(DU,DelxDU,DUxL,DUxR)
+     call construct_3D_x(DV,DelxDV,DVxL,DVxR)
+     call construct_3D_y(DU,DelyDU,DUyL,DUyR)
+     call construct_3D_y(DV,DelyDV,DVyL,DVyR)
+
+	
+     !set flux to zero in x at wet-dry front (Cheng)
+     do j = Jbeg,Jend
+     do i = Ibeg,Iend1
+       DxL(i,j) = EtaxL(i,j)+hfx(i,j)
+       DxR(i,j) = EtaxR(i,j)+hfx(i,j)
+     enddo
+     enddo
+	 DxL = max(DxL,MinDep)
+	 DxR = max(DxR,MinDep)
+     do k = Kbeg,Kend
+     do j = Jbeg,Jend
+     do i = Ibeg,Iend
+ 	   if (Mask(i,j)==1.and.Mask(i+1,j)==0) then
+	     EtaxL(i+1,j) = Eta(i,j)
+         DxL(i+1,j) = D(i,j)
+         DUxL(i+1,j,k) = Zero
+ 	   elseif (Mask(i,j)==1.and.Mask(i-1,j)==0) then
+	     EtaxR(i,j) = Eta(i,j)
+         DxR(i,j) = D(i,j)
+         DUxR(i,j,k) = Zero
+ 	   elseif (Mask(i,j)==0) then
+         EtaxL(i+1,j) = Eta(i,j)	   
+         DxL(i+1,j) = D(i,j)
+         DUxL(i+1,j,k) = Zero
+ 		 DVxL(i+1,j,k) = Zero
+		 EtaxR(i,j) = Eta(i,j)
+         DxR(i,j) = D(i,j)
+         DUxR(i,j,k) = Zero
+       endif   
+     enddo
+     enddo
+     enddo
+     do k = Kbeg,Kend
+     do j = Jbeg,Jend
+     do i = Ibeg,Iend1
+       ExL(i,j,k) = DUxL(i,j,k)
+       ExR(i,j,k) = DUxR(i,j,k)
+     enddo
+     enddo
+     enddo
+	 
+     !set flux to zero in y at wet-dry front (Cheng)
+     do j = Jbeg,Jend1
+     do i = Ibeg,Iend
+       DyL(i,j) = EtayL(i,j)+hfy(i,j)
+       DyR(i,j) = EtayR(i,j)+hfy(i,j)
+     enddo
+     enddo
+	 DyL = max(DyL,MinDep)
+	 DyR = max(DyR,MinDep)
+     do k = Kbeg,Kend
+     do j = Jbeg,Jend
+     do i = Ibeg,Iend
+	   if (Mask(i,j)==1.and.Mask(i,j+1)==0) then
+	     EtayL(i,j+1) = Eta(i,j)
+         DyL(i,j+1) = D(i,j)
+		 DVyL(i,j+1,k) = Zero
+	   elseif (Mask(i,j)==1.and.Mask(i,j-1)==0) then
+	     EtayR(i,j) = Eta(i,j)
+         DyR(i,j) = D(i,j)
+		 DVyR(i,j,k) = Zero
+	   elseif (Mask(i,j)==0) then	
+         EtayL(i,j+1) = Eta(i,j)
+         DyL(i,j+1) = D(i,j)
+		 DVyL(i,j+1,k) = Zero
+         EtayR(i,j) = Eta(i,j)
+         DyR(i,j) = D(i,j)
+		 DVyR(i,j,k) = Zero
+       endif   
+     enddo
+     enddo
+     enddo
+     do k = Kbeg,Kend
+     do j = Jbeg,Jend1
+     do i = Ibeg,Iend
+       EyL(i,j,k) = DVyL(i,j,k)
+       EyR(i,j,k) = DVyR(i,j,k)
+     enddo
+     enddo
+     enddo   	 
+
+     allocate(D3xL(Mloc1,Nloc,Kloc))
+     allocate(D3xR(Mloc1,Nloc,Kloc))
+     do k = 1,Kloc
+     do j = 1,Nloc
+     do i = 1,Mloc1
+       D3xL(i,j,k) = DxL(i,j) !revised the flux by Cheng
+       D3xR(i,j,k) = DxR(i,j)
+     enddo
+     enddo
+     enddo
+
+     allocate(D3yL(Mloc,Nloc1,Kloc))
+     allocate(D3yR(Mloc,Nloc1,Kloc))
+     do k = 1,Kloc
+     do j = 1,Nloc1
+     do i = 1,Mloc
+       D3yL(i,j,k) = DyL(i,j)
+       D3yR(i,j,k) = DyR(i,j)
+     enddo
+     enddo
+     enddo
+
+     call wave_speed
+
+     call HLL(Mloc1,Nloc,Kloc,SxL,SxR,ExL,ExR,D3xL,D3xR,Ex)
+     call HLL(Mloc,Nloc1,Kloc,SyL,SyR,EyL,EyR,D3yL,D3yR,Ey)
+
+     ! left and right side
+# if defined (PARALLEL)
+     if(n_west.eq.MPI_PROC_NULL) then
+# endif
+     do j = Jbeg,Jend
+     do k = Kbeg,Kend
+       if(Bc_X0==1.or.Bc_X0==2.or.Bc_X0==5) then ! added by Cheng for wall friction
+         Ex(Ibeg,j,k) = Zero
+       elseif(Bc_X0==3) then
+         Ex(Ibeg,j,k) = Din_X0(j)*Uin_X0(j,k)
+       endif
+     enddo
+     enddo
+# if defined (PARALLEL)
+     endif
+# endif
+
+# if defined (PARALLEL)
+     if(n_east.eq.MPI_PROC_NULL) then
+# endif
+     do j = Jbeg,Jend
+     do k = Kbeg,Kend
+       if(Bc_Xn==1.or.Bc_Xn==2.or.Bc_Xn==5) then ! added by Cheng for wall friction
+         Ex(Iend1,j,k) = Zero
+       elseif(Bc_Xn==3) then
+         Ex(Iend1,j,k) = Din_Xn(j)*Uin_Xn(j,k)
+       endif
+     enddo
+     enddo
+# if defined (PARALLEL)
+     endif
+# endif
+
+     ! front and back side  
+# if defined (PARALLEL)
+     if(n_suth.eq.MPI_PROC_NULL) then
+# endif
+     do i = Ibeg,Iend
+     do k = Kbeg,Kend
+       if(Bc_Y0==1.or.Bc_Y0==2.or.Bc_Y0==5) then ! added by Cheng for wall friction
+         Ey(i,Jbeg,k) = Zero
+       endif
+     enddo
+     enddo
+# if defined (PARALLEL)
+     endif
+# endif
+
+# if defined (PARALLEL)
+     if(n_nrth.eq.MPI_PROC_NULL) then
+# endif
+     do i = Ibeg,Iend
+     do k = Kbeg,Kend
+       if(Bc_Yn==1.or.Bc_Yn==2.or.Bc_Yn==5) then ! added by Cheng for wall friction
+         Ey(i,Jend1,k) = Zero
+       endif
+     enddo
+     enddo
+# if defined (PARALLEL)
+     endif
+# endif
+
+
+!     do i = Ibeg,Iend
+!     do j = Jbeg,Jend
+!     do k = Kbeg+1,Kend1
+!       Omega(i,j,k) = Omega(i,j,k-1)-dsig(k-1)*  &
+!          (R1(i,j)+(Ex(i+1,j,k-1)-Ex(i,j,k-1))/dx+(Ey(i,j+1,k-1)-Ey(i,j,k-1))/dy)                      
+!       if(Mask(i,j)==0) Omega(i,j,k) = zero
+!     enddo
+!     enddo
+!     enddo
+
+     DO I=Ibeg,Iend
+     DO J=Jbeg,Jend
+     DO K=Kbeg,Kend
+       GAMMA_s(I,J,K) = R1(I,J) + (Ex(i+1,j,k)-Ex(i,j,k))/DX  &
+                                + (Ey(i,j+1,k)-Ey(i,j,k))/DY &
+                                + (Omega(I,J,K+1)-Omega(I,J,K))/Dsig(K)
+     ENDDO
+     ENDDO
+     ENDDO
+
+     deallocate(D3xL)
+     deallocate(D3xR)
+     deallocate(D3yL)
+     deallocate(D3yR)
+
+     return
+
+     END SUBROUTINE CALCULATE_GAMMAS
 
 !------------------------The End----------------------------------------------

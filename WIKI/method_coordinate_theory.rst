@@ -4,11 +4,21 @@ New s-Coordinate
 According to Kirby et al. (2022, in preparation), the governing equations in a generalized :math:`s`-system :math:`(x,y,s,t)`, with a range :math:`0 \leq s \leq 1` that preserves the boundary locations from the :math:`\sigma` coordinate mapping, can be expressed by
 
 .. math::
+   :label: mass
 
-   D_{,t} + ( D u_\alpha )_{,\alpha} + \tilde{\omega}_{,s}  &=  \Gamma_s \\ 
-  (D u_\alpha)_{,t} + (D u_\alpha u_\beta + \frac{1}{2} gD^2 \delta_{\alpha\beta} )_{,\beta} + (u_\alpha \tilde{\omega})_{,s}
- &=  S_{q\alpha} + S_{h\alpha} + u_\alpha \Gamma_s \\
-  (Dw)_{,t} + (D u_\beta w)_{,\beta} + (w\tilde{\omega})_{,s}  &=  S_{qz} + w \Gamma_s
+   D_{,t} + ( D u_\alpha )_{,\alpha} + \tilde{\omega}_{,s}  =  \Gamma_s 
+
+and
+
+.. math::
+   :label: momx
+ 
+   (D u_\alpha)_{,t} + (D u_\alpha u_\beta + \frac{1}{2} gD^2 \delta_{\alpha\beta} )_{,\beta} + (u_\alpha \tilde{\omega})_{,s} =  S_{q\alpha} + S_{h\alpha} + u_\alpha \Gamma_s
+
+.. math::
+   :label: momz
+
+   (Dw)_{,t} + (D u_\beta w)_{,\beta} + (w\tilde{\omega})_{,s}  =  S_{qz} + w \Gamma_s
 
 The modified normal velocity :math:`\tilde{\omega}` is given by
 
@@ -32,10 +42,14 @@ or
    \Gamma_s = & D_{,t} + u_\alpha D_{,\alpha} + \tilde{\omega}_{,s} - D (u_{\alpha,s} s_{,\alpha} + w_{,s} s_{,z}) \\
        =& D_{,t} + (u_\alpha D)_{,\alpha} + \tilde{\omega}_{,s}
 
-To evaluate :math:`\Gamma_s` at the same time level, replace :math:`D_{,t}` with the divergence of mass flux based on the continuity equation :math:`D_{,t} = - D \bar{u}_{\alpha,\alpha}`, where :math:`\bar{u}_\alpha` represents the depth averaged velocity,
+Which is, in fact, :eq:`mass`. There are two options to calculate :math:`\Gamma_s`. 
+
+(1) To evaluate :math:`\Gamma_s` at the same time level, replace :math:`D_{,t}` with the divergence of mass flux based on the continuity equation :math:`D_{,t} = - D \bar{u}_{\alpha,\alpha}`, where :math:`\bar{u}_\alpha` represents the depth averaged velocity,
 
 .. math::
    \Gamma_s = [D(u_\alpha - \bar{u}_\alpha)]_{,\alpha} + \tilde{\omega}_{,s} 
+
+(2) The other option is to calculate :math:`\Gamma_s` using (1) directly. It turned out that using the latter option is more accurate because :math:`\tilde{\omega}` is calculated in :eq:`omega`. :math:`s_{,t}` is closely related to :math:`D_{,t}`, guaranteeing mass conservation. 
 
 There are two choices of :math:`s` coordinate system in the model.
 

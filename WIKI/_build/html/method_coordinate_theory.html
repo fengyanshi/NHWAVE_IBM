@@ -38,24 +38,32 @@
   <div class="section" id="new-s-coordinate">
 <h1>New s-Coordinate<a class="headerlink" href="#new-s-coordinate" title="Permalink to this headline">¶</a></h1>
 <p>According to Kirby et al. (2022, in preparation), the governing equations in a generalized <span class="math notranslate nohighlight">\(s\)</span>-system <span class="math notranslate nohighlight">\((x,y,s,t)\)</span>, with a range <span class="math notranslate nohighlight">\(0 \leq s \leq 1\)</span> that preserves the boundary locations from the <span class="math notranslate nohighlight">\(\sigma\)</span> coordinate mapping, can be expressed by</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}  D_{,t} + ( D u_\alpha )_{,\alpha} + \tilde{\omega}_{,s}  &amp;=  \Gamma_s \\
- (D u_\alpha)_{,t} + (D u_\alpha u_\beta + \frac{1}{2} gD^2 \delta_{\alpha\beta} )_{,\beta} + (u_\alpha \tilde{\omega})_{,s}
-&amp;=  S_{q\alpha} + S_{h\alpha} + u_\alpha \Gamma_s \\
- (Dw)_{,t} + (D u_\beta w)_{,\beta} + (w\tilde{\omega})_{,s}  &amp;=  S_{qz} + w \Gamma_s\end{split}\]</div>
+<div class="math notranslate nohighlight" id="equation-mass">
+<span class="eqno">(1)<a class="headerlink" href="#equation-mass" title="Permalink to this equation">¶</a></span>\[D_{,t} + ( D u_\alpha )_{,\alpha} + \tilde{\omega}_{,s}  =  \Gamma_s\]</div>
+<p>and</p>
+<div class="math notranslate nohighlight" id="equation-momx">
+<span class="eqno">(2)<a class="headerlink" href="#equation-momx" title="Permalink to this equation">¶</a></span>\[(D u_\alpha)_{,t} + (D u_\alpha u_\beta + \frac{1}{2} gD^2 \delta_{\alpha\beta} )_{,\beta} + (u_\alpha \tilde{\omega})_{,s} =  S_{q\alpha} + S_{h\alpha} + u_\alpha \Gamma_s\]</div>
+<div class="math notranslate nohighlight" id="equation-momz">
+<span class="eqno">(3)<a class="headerlink" href="#equation-momz" title="Permalink to this equation">¶</a></span>\[(Dw)_{,t} + (D u_\beta w)_{,\beta} + (w\tilde{\omega})_{,s}  =  S_{qz} + w \Gamma_s\]</div>
 <p>The modified normal velocity <span class="math notranslate nohighlight">\(\tilde{\omega}\)</span> is given by</p>
 <div class="math notranslate nohighlight" id="equation-omega">
-<span class="eqno">(1)<a class="headerlink" href="#equation-omega" title="Permalink to this equation">¶</a></span>\[ \tilde{\omega} = D ( s_{,t} + u_\alpha s_{,\alpha} + w s_{,z} )\]</div>
+<span class="eqno">(4)<a class="headerlink" href="#equation-omega" title="Permalink to this equation">¶</a></span>\[ \tilde{\omega} = D ( s_{,t} + u_\alpha s_{,\alpha} + w s_{,z} )\]</div>
 <p>and the inhomogeneous term <span class="math notranslate nohighlight">\(\Gamma_s\)</span> is given by</p>
 <div class="math notranslate nohighlight" id="equation-gamma-s">
-<span class="eqno">(2)<a class="headerlink" href="#equation-gamma-s" title="Permalink to this equation">¶</a></span>\[\Gamma_s = D_{,t} + u_\alpha D_{,\alpha} + D [ (s_{,t})_{,s} + u_\alpha (s_{,\alpha})_{,s} + w (s_{,z})_{,s} ]\]</div>
+<span class="eqno">(5)<a class="headerlink" href="#equation-gamma-s" title="Permalink to this equation">¶</a></span>\[\Gamma_s = D_{,t} + u_\alpha D_{,\alpha} + D [ (s_{,t})_{,s} + u_\alpha (s_{,\alpha})_{,s} + w (s_{,z})_{,s} ]\]</div>
 <p>or</p>
 <div class="math notranslate nohighlight" id="equation-gamma-s1">
-<span class="eqno">(3)<a class="headerlink" href="#equation-gamma-s1" title="Permalink to this equation">¶</a></span>\[\begin{split}\Gamma_s = &amp; D_{,t} + u_\alpha D_{,\alpha} + \tilde{\omega}_{,s} - D (u_{\alpha,s} s_{,\alpha} + w_{,s} s_{,z}) \\
+<span class="eqno">(6)<a class="headerlink" href="#equation-gamma-s1" title="Permalink to this equation">¶</a></span>\[\begin{split}\Gamma_s = &amp; D_{,t} + u_\alpha D_{,\alpha} + \tilde{\omega}_{,s} - D (u_{\alpha,s} s_{,\alpha} + w_{,s} s_{,z}) \\
     =&amp; D_{,t} + (u_\alpha D)_{,\alpha} + \tilde{\omega}_{,s}\end{split}\]</div>
-<p>To evaluate <span class="math notranslate nohighlight">\(\Gamma_s\)</span> at the same time level, replace <span class="math notranslate nohighlight">\(D_{,t}\)</span> with the divergence of mass flux based on the continuity equation <span class="math notranslate nohighlight">\(D_{,t} = - D \bar{u}_{\alpha,\alpha}\)</span>, where <span class="math notranslate nohighlight">\(\bar{u}_\alpha\)</span> represents the depth averaged velocity,</p>
+<p>Which is, in fact, <a class="reference internal" href="#equation-mass">(1)</a>. There are two options to calculate <span class="math notranslate nohighlight">\(\Gamma_s\)</span>.</p>
+<ol class="arabic simple">
+<li>To evaluate <span class="math notranslate nohighlight">\(\Gamma_s\)</span> at the same time level, replace <span class="math notranslate nohighlight">\(D_{,t}\)</span> with the divergence of mass flux based on the continuity equation <span class="math notranslate nohighlight">\(D_{,t} = - D \bar{u}_{\alpha,\alpha}\)</span>, where <span class="math notranslate nohighlight">\(\bar{u}_\alpha\)</span> represents the depth averaged velocity,</li>
+</ol>
 <div class="math notranslate nohighlight">
 \[\Gamma_s = [D(u_\alpha - \bar{u}_\alpha)]_{,\alpha} + \tilde{\omega}_{,s}\]</div>
+<ol class="arabic simple" start="2">
+<li>The other option is to calculate <span class="math notranslate nohighlight">\(\Gamma_s\)</span> using (1) directly. It turned out that using the latter option is more accurate because <span class="math notranslate nohighlight">\(\tilde{\omega}\)</span> is calculated in <a class="reference internal" href="#equation-omega">(4)</a>. <span class="math notranslate nohighlight">\(s_{,t}\)</span> is closely related to <span class="math notranslate nohighlight">\(D_{,t}\)</span>, guaranteeing mass conservation.</li>
+</ol>
 <p>There are two choices of <span class="math notranslate nohighlight">\(s\)</span> coordinate system in the model.</p>
 <p><strong>1) The original</strong> <span class="math notranslate nohighlight">\(\sigma\)</span> <strong>coordinate</strong></p>
 <p>In the original <span class="math notranslate nohighlight">\(\sigma\)</span> coordinate system, i.e., <span class="math notranslate nohighlight">\(s = \sigma\)</span>,</p>

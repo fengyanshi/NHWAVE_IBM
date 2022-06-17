@@ -3,7 +3,8 @@ m=656;
 n=200;
 k=30;
 dep_flat=0.054;
-rat=1.1;
+%rat=1.1; % first test, no instability
+rat=1.005;
 dep(1:n,1:m)=dep_flat;
 
 save -ASCII depth.txt dep
@@ -17,7 +18,7 @@ widthy=100.0;
 sizes=[60 70 80];
 nums=[6 6 6];
 
-rng(1);
+rng(2);
 for kk=1:length(sizes)
 x0{kk}=floor(xstart+rand(nums(kk),1)*widthx);
 x1{kk}=x0{kk}+sizes(kk);

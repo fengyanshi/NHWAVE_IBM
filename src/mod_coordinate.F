@@ -39,7 +39,19 @@
 MODULE COORDINATE_MODULE
     USE GLOBAL, ONLY: Zero,DelxSc,DelySc,D,DelxH,DelyH, &
                        DelxEta,DelyEta,sigc,Mloc,Nloc,Kloc, &
-                       DelxSl,DelySl,Kloc1,sig
+                       DelxSl,DelySl,Kloc1,sig, &
+                       Ibeg,Iend,Jbeg,Jend,&
+                       Iend1,Jend1,&
+                       Grd_R, Ivgrd, Kbeg,Kend,Kend1,Kglob,Nghost,dsig,sigc,sig, &
+                       u_bar,v_bar,GAMMA_s,U,V,W,DX,DY,Omega,MASK
+
+
+                !       Eta,DelxEta,DelyEta,DelxU,DelxV,DelyU,DelyV, &
+                !       DU,DelxDU,DV,DelxDV,DelyDU,DelyDV,&
+                !       EtaxL,EtaxR,EtayL,EtayR,UxL,UxR,VxL,VxR,UyL,UyR,VyL,VyR, &
+                !       DUxL,DUxR,DVxL,DVxR,DUyL,DUyR,DVyL,DVyR, &
+                !       DxL,DxR,ExL,ExR,DyL,DyR,Ex,Ey
+
     IMPLICIT NONE
     SAVE
 
@@ -51,6 +63,38 @@ CONTAINS
     IMPLICIT NONE
     INTEGER :: i,j,k,iglob,jglob,lglob
 
+!
+!    vertical grid, this part was from initialize.F subroutine generate_grid
+!
+     if (Ivgrd==1) then
+     do k = 1,Kloc
+     dsig(k) = 1.0/float(Kglob)
+     enddo
+     elseif(Ivgrd==2) then
+     dsig(Kbeg) = (Grd_R-1.0)/(Grd_R**float(Kglob)-1.0)
+     do k = Kbeg+1,Kend
+     dsig(k) = dsig(k-1)*Grd_R
+     enddo
+
+     do k = 1,Nghost
+     dsig(Kbeg-k) = dsig(Kbeg+k-1)
+     enddo
+
+     do k = 1,Nghost
+     dsig(Kend+k) = dsig(Kend-k+1)
+     enddo
+     endif
+
+     sig(Kbeg) = Zero
+     do k = Kbeg+1,Kloc1
+     sig(k) = sig(k-1)+dsig(k-1)
+     sigc(k-1) = sig(k-1)+0.5*dsig(k-1)
+     enddo
+     do k = Kbeg-1,1,-1
+     sig(k) = sig(k+1)-dsig(k)
+     sigc(k) = sig(k+1)-0.5*dsig(k)
+     enddo
+
       RETURN
     END SUBROUTINE COORDINATE_INITIALIZATION
 
@@ -58,9 +102,6 @@ CONTAINS
 !--------------------------------------------------- 
 !    Calculate sigma transformation coefficient
 !    Called by       
-!      eval_duvw
-!    Last update: 29/03/2011, Gangfeng Ma
-!    04/13/2022, add generalized s coordinate calculation, shi
 !--------------------------------------------------
 
      IMPLICIT NONE
@@ -99,6 +140,86 @@ CONTAINS
      enddo
 
      END SUBROUTINE SIGMA_TRANSFORM
+
+
+     SUBROUTINE GET_OMEGA(R1)
+
+!-----------------------------------------------
+!    Obtain vertical velocity in sigma-coord.
+!    Called by 
+!       eval_duvw
+!-----------------------------------------------
+     use global
+     implicit none
+     integer :: i,j,k
+     real(SP), dimension(Mloc,Nloc), intent(in) :: R1
+     REAL(SP) :: D_x,D_y,U_at_s,V_at_s,W_at_s
+
+! use the omega description directly, no TVD scheme here because it is not
+! conservative form
+
+     Omega = ZERO
+     DO K=Kbeg+1,Kend1-1
+     DO I=Ibeg,Iend
+     DO J=Jbeg,Jend    
+       D_x=(D(I+1,J)-D(I-1,J))/DX/2.0_SP
+       D_y=(D(I,J+1)-D(I,J-1))/DY/2.0_SP
+       U_at_s = (U(I,J,K-1)*dsig(K)+U(I,J,K)*dsig(K-1))/(dsig(K)+dsig(K-1))
+       V_at_s = (V(I,J,K-1)*dsig(K)+V(I,J,K)*dsig(K-1))/(dsig(K)+dsig(K-1))
+       W_at_s = (W(I,J,K-1)*dsig(K)+W(I,J,K)*dsig(K-1))/(dsig(K)+dsig(K-1))
+       Omega(I,J,K)= W_at_s - sig(K)*(R1(I,J)+U_at_s*D_x+V_at_s*D_y)
+       if(Mask(i,j)==0) Omega(i,j,k) = zero
+     ENDDO
+     ENDDO
+     ENDDO
+
+     return
+
+     END SUBROUTINE GET_OMEGA
+
+     SUBROUTINE MEAN_VELOCITY
+
+       IMPLICIT NONE
+       INTEGER :: i,j,k
+
+       U_bar = ZERO
+       V_bar = ZERO
+       DO J = 1,Nloc
+       DO I = 1,Mloc
+       DO K = Kbeg,Kend
+         U_bar(I,J)=U_bar(I,J)+U(I,J,K)*dsig(K)
+         V_bar(I,J)=V_bar(I,J)+V(I,J,K)*dsig(K)
+       ENDDO
+       ENDDO
+       ENDDO
+         
+     END SUBROUTINE MEAN_VELOCITY
+
+
+     SUBROUTINE GAMMAS
+!--------------------------------------------------- 
+!    Calculate sigma transformation coefficient
+!    Called by       
+!--------------------------------------------------
+
+       IMPLICIT NONE
+       INTEGER :: i,j,k
+
+       DO K = Ibeg,Iend      
+       DO J = Jbeg,Jend
+       DO I = Kbeg,Kend 
+         GAMMA_s(I,J,K) = (D(I+1,J)*(U(I+1,J,K)-U_bar(I+1,J))-D(I-1,J)*(U(I-1,J,K)-U_bar(I-1,J))) & 
+                          /DX/2.0 &
+                        + (D(I,J+1)*(V(I,J+1,K)-U_bar(I,J+1))-D(I,J-1)*(U(I,J-1,K)-U_bar(I,J-1))) & 
+                          /DY/2.0 &
+                        + (Omega(I,J,K+1)-Omega(I,J,K))/dsig(K)/2.0
+       ENDDO
+       ENDDO
+       ENDDO
+
+
+     END SUBROUTINE GAMMAS
+
 
 
 END MODULE COORDINATE_MODULE

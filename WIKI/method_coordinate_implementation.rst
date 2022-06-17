@@ -24,36 +24,29 @@ The code coordinate module was in mod\_coordinate.F. The module contains the ori
         | ...
       END SUBROUTINE SIGMA_TRANSFORM
 
-      SUBROUTINE GAMMA_s
-        | ...
-      END SUBROUTINE GAMMA_s
-
-      SUBROUTINE MEAN_VELOCITY
-        | ...
-      END SUBROUTINE MEAN_VELOCITY
-
-      SUBROUTINE GET_OMEGA(R1)
-        | ...
-      END SUBROUTINE GET_OMEGA(R1)
-
 
     END MODULE COORDINATE_MODULE
 
 **2) Procedures**
 
-a. move the calculation of :math:`dsig` to  SUBROUTINE COORDINATE\_INITIALIZATION to generalize s-coordinate. NOTE: we still keep :math:`dsig` but for a generic :math:`\Delta s`. In this way, the code for solving the continuity equation does not need to change. 
+* add GAMMA\_s in mod_global.F and initialize.F
 
-b. move subroutine get_omega to SUBROUTINE GET\_OMEGA in MOD\_COORDINATE.F to make :math:`\omega` to the generic :math:`\tilde{\omega}`
+* move the calculation of :math:`dsig` to  SUBROUTINE COORDINATE\_INITIALIZATION to generalize s-coordinate. NOTE: we still keep :math:`dsig` but for a generic :math:`\Delta s`. In this way, the code for solving the continuity equation does not need to change. 
 
-c. calculate depth-averaged velocity :math:`\bar{u}_\alpha` in SUBROUTINE MEAN\_VELOCITY
+* remove get_omega(R1) in the original nhwave.F, in which :math:`\omega` is solved using the 3D mass conservation equation (1). 
+
+* create the subroutine get_omega(R1) in mod_coordinate.F. The :math:`\omega` will be the generic :math:`\tilde{\omega}`. NOTE: :math:`\tilde{\omega}` here is calculated using :eq:`omega`, not :eq:`mass`. The residual term :math:`\Gamma_s` is calculated using :eq:`mass`.
   
-d. calculate :math:`\Gamma_s` in SUBROUTINE GAMMA\_s based on
+* calculate :math:`\Gamma_s` in SUBROUTINE CALCULATE_GAMMAS in nhwave.F based on
 
 .. math::
-   \Gamma_s = [D(u_\alpha - \bar{u}_\alpha)]_{,\alpha} + \tilde{\omega}_{,s} 
 
-e. in SUBROUTINE eval\_duvw, add :math:`\Gamma_s` as an extra term in the momentum equations. Specifically, add :math:`u_{\alpha} \Gamma_s` and :math:`w \Gamma_s` in :math:`R2`, which is combination of advection, Coriolis, horizontal diffusion and extra forcing terms.   
+   \Gamma_s = D_{,t} + ( D u_\alpha )_{,\alpha} + \tilde{\omega}_{,s}  
 
-f. add :math:`Gamma_s` term in the 3D mass conservation equation, resulting in an extra term on RHS of the Poisson equation. Following the previous approach to treat :math:`u, v, w` terms, we use explicit scheme. The :math:`Gamma_s` is implemented in SUBROUTINE generate\_coef\_rhs in pressure.F
+where :math:`D_{,t}` has been calculated in subroutine eval\_duvw, named R1. 
+
+* in SUBROUTINE eval\_duvw, add :math:`\Gamma_s` as extra terms in the momentum equations. Specifically, add :math:`u_{\alpha} \Gamma_s` and :math:`w \Gamma_s` in :math:`R2`, :math:`R3` and :math:`R4`, which are combination of advection, Coriolis, horizontal diffusion and extra forcing terms.   
+
+* The :math:`\Gamma_s` won't affect the pressure Poisson equation because we use it only in the first step of the splitting method.
 
 

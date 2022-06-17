@@ -1466,7 +1466,13 @@
               Emax(Mloc,Nloc),Emin(Mloc,Nloc),WdU(Mloc,Nloc),WdV(Mloc,Nloc),Wsx(Mloc,Nloc),Wsy(Mloc,Nloc), &
 			  HeightMax(Mloc,Nloc))
 
+! s-coordinate ROXSI
+     ALLOCATE(u_bar(Mloc,Nloc),v_bar(Mloc,Nloc))
+
      ! three-dimensional vars
+
+! s-coordinate ROXSI
+     ALLOCATE(GAMMA_s(Mloc,Nloc,Kloc))
 
 # if defined (LANDSLIDE_COMPREHENSIVE)
 ! fyshi add base bathymetry for landslide
@@ -1663,6 +1669,7 @@
 !--------------------------------------------------------------------------------------------------------------------------
 !
      use global
+     USE COORDINATE_MODULE
      implicit none
      integer :: i,j,k
 !
@@ -1699,37 +1706,42 @@
      y(j) = y(j+1)-dy
      yc(j) = y(j+1)-0.5*dy
      enddo
+
+! s-coordinate ROXSI
+
+     CALL COORDINATE_INITIALIZATION
+
 !
-!    vertical grid
+!    vertical grid, roxsi: move this part to mod_coordinate.F for generalized s-coordinate
 !
-     if (Ivgrd==1) then
-     do k = 1,Kloc
-     dsig(k) = 1.0/float(Kglob)
-     enddo
-     elseif(Ivgrd==2) then
-     dsig(Kbeg) = (Grd_R-1.0)/(Grd_R**float(Kglob)-1.0)
-     do k = Kbeg+1,Kend
-     dsig(k) = dsig(k-1)*Grd_R
-     enddo
+!     if (Ivgrd==1) then
+!     do k = 1,Kloc
+!     dsig(k) = 1.0/float(Kglob)
+!     enddo
+!     elseif(Ivgrd==2) then
+!     dsig(Kbeg) = (Grd_R-1.0)/(Grd_R**float(Kglob)-1.0)
+!     do k = Kbeg+1,Kend
+!     dsig(k) = dsig(k-1)*Grd_R
+!     enddo
 
-     do k = 1,Nghost
-     dsig(Kbeg-k) = dsig(Kbeg+k-1)
-     enddo
+!     do k = 1,Nghost
+!     dsig(Kbeg-k) = dsig(Kbeg+k-1)
+!     enddo
 
-     do k = 1,Nghost
-     dsig(Kend+k) = dsig(Kend-k+1)
-     enddo
-     endif
+!     do k = 1,Nghost
+!     dsig(Kend+k) = dsig(Kend-k+1)
+!     enddo
+!     endif
 
-     sig(Kbeg) = Zero
-     do k = Kbeg+1,Kloc1
-     sig(k) = sig(k-1)+dsig(k-1)
-     sigc(k-1) = sig(k-1)+0.5*dsig(k-1)
-     enddo
-     do k = Kbeg-1,1,-1
-     sig(k) = sig(k+1)-dsig(k)
-     sigc(k) = sig(k+1)-0.5*dsig(k)
-     enddo
+!     sig(Kbeg) = Zero
+!     do k = Kbeg+1,Kloc1
+!     sig(k) = sig(k-1)+dsig(k-1)
+!     sigc(k-1) = sig(k-1)+0.5*dsig(k-1)
+!     enddo
+!     do k = Kbeg-1,1,-1
+!     sig(k) = sig(k+1)-dsig(k)
+!     sigc(k) = sig(k+1)-0.5*dsig(k)
+!     enddo
 !
      end subroutine generate_grid
 !

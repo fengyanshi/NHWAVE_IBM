@@ -19,7 +19,7 @@ z=[0:l-1]*dz;
 [X,Y,Z]=meshgrid(x,y,z);
 
 %nst=input('start= ');
-nst=500;
+nst=400;
 
 nfile=[nst];
 TIME={'300s','400s','500s'};

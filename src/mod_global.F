@@ -157,6 +157,10 @@
      real(SP) :: Por_X0,Por_Xn,Por_Y0,Por_Yn,Por_Z0,Por_Zn
 # endif
 
+! for s-coordinate, ROXSI
+     REAL(SP),DIMENSION(:,:),ALLOCATABLE :: u_bar,v_bar
+     REAL(SP),DIMENSION(:,:,:),ALLOCATABLE :: GAMMA_s
+
 # if defined (DEFORMABLESLIDE)
      real(SP), dimension(:,:), allocatable :: ObsForceX_gs,ObsForceY_gs,ObsForceZ_gs
      real(SP), dimension(:,:), allocatable :: set_dist_x_gs,set_dist_y_gs,set_dist_z_gs
