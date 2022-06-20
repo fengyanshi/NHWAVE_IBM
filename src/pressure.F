@@ -480,25 +480,30 @@
 # endif
      implicit none
      integer :: i,j,k,neq,n,ic
-     real(SP), dimension(:,:,:), allocatable :: DelxS,DelyS,DelzS,A1
+!     real(SP), dimension(:,:,:), allocatable :: DelxS,DelyS,DelzS,A1
+     real(SP), dimension(:,:,:), allocatable :: A1
      integer,  dimension(:,:,:), allocatable :: indx
 
-     allocate(DelxS(Mloc,Nloc,Kloc1))
-     allocate(DelyS(Mloc,Nloc,Kloc1))
-     allocate(DelzS(Mloc,Nloc,Kloc1))
+!     allocate(DelxS(Mloc,Nloc,Kloc1))
+!     allocate(DelyS(Mloc,Nloc,Kloc1))
+!     allocate(DelzS(Mloc,Nloc,Kloc1))
      allocate(A1(Mloc,Nloc,Kloc1))
      allocate(indx(Mloc,Nloc,Kloc))
 
-     DelxS = Zero
-     DelyS = Zero
-     DelzS = Zero
+
+!   this part is repeated because sigma_transform has already done this
+!   for the new s-coordinate, we need to use the new formula to do all the three terms 
+ 
+!     DelxS = Zero
+!     DelyS = Zero
+!     DelzS = Zero
      A1 = Zero
      do k = Kbeg,Kend1
      do j = Jbeg,Jend
      do i = Ibeg,Iend
-       DelxS(i,j,k) = (1.-sig(k))/D(i,j)*DelxH(i,j)-sig(k)/D(i,j)*DelxEta(i,j)
-       DelyS(i,j,k) = (1.-sig(k))/D(i,j)*DelyH(i,j)-sig(k)/D(i,j)*DelyEta(i,j) 
-       DelzS(i,j,k) = 1./D(i,j)
+!       DelxS(i,j,k) = (1.-sig(k))/D(i,j)*DelxH(i,j)-sig(k)/D(i,j)*DelxEta(i,j)
+!       DelyS(i,j,k) = (1.-sig(k))/D(i,j)*DelyH(i,j)-sig(k)/D(i,j)*DelyEta(i,j) 
+!       DelzS(i,j,k) = 1./D(i,j)
 
        A1(i,j,k) = DelxS(i,j,k)*DelxS(i,j,k)+DelyS(i,j,k)*DelyS(i,j,k)+  &
             DelzS(i,j,k)*DelzS(i,j,k)
@@ -833,9 +838,9 @@
      JCoef(14) = indx(Ibeg,Jbeg+1,Kbeg)-indx(Ibeg+1,Jbeg+1,Kbeg+1)     ! (i-1,j,k-1)
      JCoef(15) = indx(Ibeg+1,Jbeg,Kbeg)-indx(Ibeg+1,Jbeg+1,Kbeg+1)     ! (i,j-1,k-1)
 
-     deallocate(DelxS)
-     deallocate(DelyS)
-     deallocate(DelzS)
+!     deallocate(DelxS)
+!     deallocate(DelyS)
+!     deallocate(DelzS)
      deallocate(A1) 
      deallocate(indx)
 

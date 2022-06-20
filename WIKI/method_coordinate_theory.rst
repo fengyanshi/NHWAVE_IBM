@@ -53,21 +53,52 @@ Which is, in fact, :eq:`mass`. There are two options to calculate :math:`\Gamma_
 
 There are two choices of :math:`s` coordinate system in the model.
 
-**1) The original** :math:`\sigma` **coordinate**
-
-In the original :math:`\sigma` coordinate system, i.e., :math:`s = \sigma`, 
+To get the pressure Poisson equation, we substitute the pressure-corrected velocities 
 
 .. math::
 
-   \Gamma_s = 0
-
-and
+   u^{(k)} = u^* - \frac{\Delta t}{\rho} (\frac{\partial p}{\partial x} + \frac{\partial p}{\partial s}\frac{\partial s}{\partial x^*})^{(k)}
 
 .. math::
 
-   \tilde{\omega} = \omega = D (\sigma_{,t} + u_\alpha \sigma_{,\alpha} + w \sigma_{,z}).
+   v^{(k)} = v^* - \frac{\Delta t}{\rho} (\frac{\partial p}{\partial y} + \frac{\partial p}{\partial s}\frac{\partial s}{\partial y^*})^{(k)}
 
-**2) General cases**
+.. math::
+   w^{(k)} = w^* - \frac{\Delta t}{\rho} \frac{\partial s}{\partial z^*} (\frac{\partial p}{\partial s})^{(k)} 
 
-For general cases, the details of the transformation and the resulting expressions for :math:`\tilde{\omega}` and :math:`\Gamma_s` must be worked out for each individual case. 
+into the 3D mass conservation equation 
+
+.. math::
+
+   \frac{\partial u}{\partial x} + \frac{\partial u}{\partial s} \frac{\partial s}{\partial x^*} + \frac{\partial v}{\partial y} + \frac{\partial v}{\partial s} \frac{\partial s}{\partial y^*} + \frac{\partial s}{\partial z^*} \frac{\partial w}{\partial s} = 0
+
+results in
+
+.. math::
+  :label: pressure
+
+  \frac{\partial}{\partial x} \left [ \frac{\partial p}{\partial x}+\frac{\partial p}{\partial s} \frac{\partial s}{\partial x^*} \right ] & +  \frac{\partial}{\partial y} \left [ \frac{\partial p}{\partial y}+\frac{\partial p}{\partial s} \frac{\partial s}{\partial y^*} \right ] + \frac{\partial }{\partial s} \left ( \frac{\partial p}{\partial x} \right) \frac{\partial s}{\partial x^*} + \frac{\partial }{\partial s} \left ( \frac{\partial p}{\partial y} \right) \frac{\partial s}{\partial y^*} \\ & +  \left[  \left (\frac{\partial s}{\partial x^*} \right )^2+\left ( \frac{\partial s}{\partial y^*} \right )^2+ \underline{(\frac{\partial s}{\partial z^*})^2}  \right] \frac{\partial }{\partial s} \left( \frac{\partial p}{\partial s} \right) \\ &= \frac{\rho}{\Delta t} \left( \frac{\partial u^*}{\partial x} +\frac{\partial u^*}{\partial s} \frac{\partial s}{\partial x^*} + \frac{\partial v^*}{\partial y} +\frac{\partial v^*}{\partial s} \frac{\partial s}{\partial y^*} + \underline{\frac{\partial s}{\partial z^*}} \frac{\partial w^*}{\partial s} \right)
+
+:math:`\underline{()}` represents modifications needed for the new coordinate. 
+
+
+In the general s-coordinate system, :math:`\frac{\partial s}{\partial x^*}`,  :math:`\frac{\partial s}{\partial y^*}`, and :math:`\frac{\partial s}{\partial z^*}` can be calculated using the discrete forms below,
+
+.. math::
+   :label: sx
+
+   \frac{\partial s}{\partial x^*} = - \frac{\frac{\Delta z}{\Delta x}|_{s}} {\frac{\Delta z}{\Delta s}}
+
+.. math::
+   :label: sy
+
+   \frac{\partial s}{\partial y^*} = - \frac{\frac{\Delta z}{\Delta y}|_{s}} {\frac{\Delta z}{\Delta s}}
+
+.. math::
+   :label: sz
+
+   \frac{\partial s}{\partial z^*} = \frac{1}{\frac{\Delta z}{\Delta s}}
+
+for given :math:`z(x,y,s)`.
+
 

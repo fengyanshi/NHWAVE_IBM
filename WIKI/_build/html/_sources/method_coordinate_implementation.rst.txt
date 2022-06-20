@@ -33,6 +33,8 @@ The code coordinate module was in mod\_coordinate.F. The module contains the ori
 
 * move the calculation of :math:`dsig` to  SUBROUTINE COORDINATE\_INITIALIZATION to generalize s-coordinate. NOTE: we still keep :math:`dsig` but for a generic :math:`\Delta s`. In this way, the code for solving the continuity equation does not need to change. 
 
+* in SUBTOUTINE SIGMA\_TRANSFORM in mod_coordinate.F, calculate :math:`\frac{\partial s}{\partial x^*}`,  :math:`\frac{\partial s}{\partial y^*}`, and :math:`\frac{\partial s}{\partial z^*}` using :eq:`sx`, :eq:`sy`, and :eq:`sz`.
+
 * remove get_omega(R1) in the original nhwave.F, in which :math:`\omega` is solved using the 3D mass conservation equation (1). 
 
 * create the subroutine get_omega(R1) in mod_coordinate.F. The :math:`\omega` will be the generic :math:`\tilde{\omega}`. NOTE: :math:`\tilde{\omega}` here is calculated using :eq:`omega`, not :eq:`mass`. The residual term :math:`\Gamma_s` is calculated using :eq:`mass`.
@@ -47,6 +49,8 @@ where :math:`D_{,t}` has been calculated in subroutine eval\_duvw, named R1.
 
 * in SUBROUTINE eval\_duvw, add :math:`\Gamma_s` as extra terms in the momentum equations. Specifically, add :math:`u_{\alpha} \Gamma_s` and :math:`w \Gamma_s` in :math:`R2`, :math:`R3` and :math:`R4`, which are combination of advection, Coriolis, horizontal diffusion and extra forcing terms.   
 
-* The :math:`\Gamma_s` won't affect the pressure Poisson equation because we use it only in the first step of the splitting method.
+* modify the pressure Poisson solver based on :eq:`pressure`.
+
+
 
 

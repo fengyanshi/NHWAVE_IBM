@@ -1496,6 +1496,9 @@
               ExtForceY(Mloc,Nloc,Kloc),UpWp(Mloc,Nloc,Kloc),IsMove(Mloc,Nloc,Kloc),Richf(Mloc,Nloc,Kloc), &
               DelxSl(Mloc,Nloc,Kloc1),DelySl(Mloc,Nloc,Kloc1))
 
+! ROXSI
+    ALLOCATE(DelxS(Mloc,Nloc,Kloc1),DelyS(Mloc,Nloc,Kloc1),DelzS(Mloc,Nloc,Kloc1))
+
      ! fluxes for construction at cell faces    
      ALLOCATE(UxL(Mloc1,Nloc,Kloc),UxR(Mloc1,Nloc,Kloc),VxL(Mloc1,Nloc,Kloc),VxR(Mloc1,Nloc,Kloc), &
               WxL(Mloc1,Nloc,Kloc),WxR(Mloc1,Nloc,Kloc),DUxL(Mloc1,Nloc,Kloc),DUxR(Mloc1,Nloc,Kloc), &

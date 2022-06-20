@@ -39,11 +39,13 @@
 MODULE COORDINATE_MODULE
     USE GLOBAL, ONLY: Zero,DelxSc,DelySc,D,DelxH,DelyH, &
                        DelxEta,DelyEta,sigc,Mloc,Nloc,Kloc, &
-                       DelxSl,DelySl,Kloc1,sig, &
+                       DelxSl,DelySl,Kloc1, &
                        Ibeg,Iend,Jbeg,Jend,&
                        Iend1,Jend1,&
                        Grd_R, Ivgrd, Kbeg,Kend,Kend1,Kglob,Nghost,dsig,sigc,sig, &
-                       u_bar,v_bar,GAMMA_s,U,V,W,DX,DY,Omega,MASK
+                       u_bar,v_bar,GAMMA_s,U,V,W,DX,DY,Omega,MASK,SP,HC,SMALL, &
+                       Eta, DelxS,DelyS,DelzS
+                       
 
 
                 !       Eta,DelxEta,DelyEta,DelxU,DelxV,DelyU,DelyV, &
@@ -66,6 +68,7 @@ CONTAINS
 !
 !    vertical grid, this part was from initialize.F subroutine generate_grid
 !
+
      if (Ivgrd==1) then
      do k = 1,Kloc
      dsig(k) = 1.0/float(Kglob)
@@ -113,18 +116,70 @@ CONTAINS
 !      d sigma/dx= -dz/dx / dz/d_sigma
 !
 
+     REAL(SP),DIMENSION(Mloc,Nloc,Kloc) :: z_center
+     REAL(SP),DIMENSION(Mloc,Nloc,Kloc1) :: z_face
 
-     DelxSc = Zero
-     DelySc = Zero
+     DO J=1,Nloc
+     DO I=1,Mloc
+        DO K=Kbeg,Kend1
+          z_face(I,J,K)=-Hc(I,J)+(K-Kbeg)*D(I,J)/(Kend1-Kbeg)
+        ENDDO
 
-     do k = 1,Kloc
-     do j = 1,Nloc
-     do i = 1,Mloc
-       DelxSc(i,j,k) = (1.0-sigc(k))/D(i,j)*DelxH(i,j)-sigc(k)/D(i,j)*DelxEta(i,j)
-       DelySc(i,j,k) = (1.0-sigc(k))/D(i,j)*DelyH(i,j)-sigc(k)/D(i,j)*DelyEta(i,j)
-     enddo
-     enddo
-     enddo
+   ! ghost cells
+        DO K=1,Kbeg-1
+          z_face(I,J,K) = z_face(I,K,Kbeg) - D(I,J)/(Kend1-Kbeg)*(Kbeg-K)
+        ENDDO
+        DO K=Kend1+1,Kloc1
+          z_face(I,J,K) = z_face(I,K,Kend) + D(I,J)/(Kend1-Kbeg)*(K-Kend1)
+        ENDDO
+
+        DO K=1,Kloc
+          z_center(I,J,K)=0.5*(z_face(I,J,K)+z_face(I,J,K+1))
+        ENDDO
+     ENDDO
+     ENDDO
+
+! center points
+
+     DO K=1,Kloc
+     DO J=1,Nloc
+     Do I=1,Mloc
+       DelxSc(I,J,K)=-(z_center(I+1,J,K)-z_center(I-1,J,K))/dx/2.0_SP &
+                     /(z_face(I,J,K+1)-z_face(I,J,K))*dsig(K)
+       DelySc(I,J,K)=-(z_center(I,J+1,K)-z_center(I,J-1,K))/dy/2.0_SP &
+                     /(z_face(I,J,K+1)-z_face(I,J,K))*dsig(K)
+     ENDDO
+     ENDDO
+     ENDDO
+
+! face points
+
+     DO K=Kbeg,Kend1
+     DO J=Jbeg,Jend
+     Do I=Ibeg,Iend
+       DelxS(I,J,K)=-(z_face(I+1,J,K)-z_face(I-1,J,K))/DX/2.0_SP &
+                     /(z_center(I,J,K)-z_center(I,J,K-1))*(dsig(K-1)+dsig(K))*0.5_SP
+       DelyS(I,J,K)=-(z_face(I,J+1,K)-z_face(I,J-1,K))/DY/2.0_SP &
+                     /(z_center(I,J,K)-z_center(I,J,K-1))*(dsig(K-1)+dsig(K))*0.5_SP
+       DelzS(I,J,K) = (dsig(K-1)+dsig(K))*0.5_SP/(z_center(I,J,K)-z_center(I,J,K-1))
+     ENDDO
+     ENDDO
+     ENDDO
+
+
+! old code using sigma coordinate
+
+!     DelxSc = Zero
+!     DelySc = Zero
+
+!     do k = 1,Kloc
+!     do j = 1,Nloc
+!     do i = 1,Mloc
+!       DelxSc(i,j,k) = (1.0-sigc(k))/D(i,j)*DelxH(i,j)-sigc(k)/D(i,j)*DelxEta(i,j)
+!       DelySc(i,j,k) = (1.0-sigc(k))/D(i,j)*DelyH(i,j)-sigc(k)/D(i,j)*DelyEta(i,j)
+!     enddo
+!     enddo
+!     enddo
 
 
      ! added by Morteza

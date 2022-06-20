@@ -234,6 +234,11 @@
                                                 DTke,DEps,DTke0,DEps0,Prod_s,Prod_b,Richf,Lag_Umean,Lag_Vmean,Lag_Wmean, &
                                                 Euler_Umean,Euler_Vmean,Euler_Wmean,DRhoX,DRhoY,ExtForceX,ExtForceY, &
                                                 UpWp,PresForceX,PresForceY,PresForceZ,Pdiff,DelxSl,DelySl
+! ROXSI
+
+      real(SP), dimension(:,:,:), allocatable :: DelxS, DelyS, DelzS
+
+
 !     real(SP), dimension(:,:,:,:), allocatable :: UGrad,VGrad,WGrad  ! deleted by Cheng, they are arrays never used.
 
      ! integer arrays

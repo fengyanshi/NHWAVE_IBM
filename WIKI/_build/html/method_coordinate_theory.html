@@ -65,15 +65,28 @@
 <li>The other option is to calculate <span class="math notranslate nohighlight">\(\Gamma_s\)</span> using (1) directly. It turned out that using the latter option is more accurate because <span class="math notranslate nohighlight">\(\tilde{\omega}\)</span> is calculated in <a class="reference internal" href="#equation-omega">(4)</a>. <span class="math notranslate nohighlight">\(s_{,t}\)</span> is closely related to <span class="math notranslate nohighlight">\(D_{,t}\)</span>, guaranteeing mass conservation.</li>
 </ol>
 <p>There are two choices of <span class="math notranslate nohighlight">\(s\)</span> coordinate system in the model.</p>
-<p><strong>1) The original</strong> <span class="math notranslate nohighlight">\(\sigma\)</span> <strong>coordinate</strong></p>
-<p>In the original <span class="math notranslate nohighlight">\(\sigma\)</span> coordinate system, i.e., <span class="math notranslate nohighlight">\(s = \sigma\)</span>,</p>
+<p>To get the pressure Poisson equation, we substitute the pressure-corrected velocities</p>
 <div class="math notranslate nohighlight">
-\[\Gamma_s = 0\]</div>
-<p>and</p>
+\[u^{(k)} = u^* - \frac{\Delta t}{\rho} (\frac{\partial p}{\partial x} + \frac{\partial p}{\partial s}\frac{\partial s}{\partial x^*})^{(k)}\]</div>
 <div class="math notranslate nohighlight">
-\[\tilde{\omega} = \omega = D (\sigma_{,t} + u_\alpha \sigma_{,\alpha} + w \sigma_{,z}).\]</div>
-<p><strong>2) General cases</strong></p>
-<p>For general cases, the details of the transformation and the resulting expressions for <span class="math notranslate nohighlight">\(\tilde{\omega}\)</span> and <span class="math notranslate nohighlight">\(\Gamma_s\)</span> must be worked out for each individual case.</p>
+\[v^{(k)} = v^* - \frac{\Delta t}{\rho} (\frac{\partial p}{\partial y} + \frac{\partial p}{\partial s}\frac{\partial s}{\partial y^*})^{(k)}\]</div>
+<div class="math notranslate nohighlight">
+\[w^{(k)} = w^* - \frac{\Delta t}{\rho} \frac{\partial s}{\partial z^*} (\frac{\partial p}{\partial s})^{(k)}\]</div>
+<p>into the 3D mass conservation equation</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial u}{\partial x} + \frac{\partial u}{\partial s} \frac{\partial s}{\partial x^*} + \frac{\partial v}{\partial y} + \frac{\partial v}{\partial s} \frac{\partial s}{\partial y^*} + \frac{\partial s}{\partial z^*} \frac{\partial w}{\partial s} = 0\]</div>
+<p>results in</p>
+<div class="math notranslate nohighlight" id="equation-pressure">
+<span class="eqno">(7)<a class="headerlink" href="#equation-pressure" title="Permalink to this equation">¶</a></span>\[\begin{split}\frac{\partial}{\partial x} \left [ \frac{\partial p}{\partial x}+\frac{\partial p}{\partial s} \frac{\partial s}{\partial x^*} \right ] &amp; +  \frac{\partial}{\partial y} \left [ \frac{\partial p}{\partial y}+\frac{\partial p}{\partial s} \frac{\partial s}{\partial y^*} \right ] + \frac{\partial }{\partial s} \left ( \frac{\partial p}{\partial x} \right) \frac{\partial s}{\partial x^*} + \frac{\partial }{\partial s} \left ( \frac{\partial p}{\partial y} \right) \frac{\partial s}{\partial y^*} \\ &amp; +  \left[  \left (\frac{\partial s}{\partial x^*} \right )^2+\left ( \frac{\partial s}{\partial y^*} \right )^2+ \underline{(\frac{\partial s}{\partial z^*})^2}  \right] \frac{\partial }{\partial s} \left( \frac{\partial p}{\partial s} \right) \\ &amp;= \frac{\rho}{\Delta t} \left( \frac{\partial u^*}{\partial x} +\frac{\partial u^*}{\partial s} \frac{\partial s}{\partial x^*} + \frac{\partial v^*}{\partial y} +\frac{\partial v^*}{\partial s} \frac{\partial s}{\partial y^*} + \underline{\frac{\partial s}{\partial z^*}} \frac{\partial w^*}{\partial s} \right)\end{split}\]</div>
+<p><span class="math notranslate nohighlight">\(\underline{()}\)</span> represents modifications needed for the new coordinate.</p>
+<p>In the general s-coordinate system, <span class="math notranslate nohighlight">\(\frac{\partial s}{\partial x^*}\)</span>,  <span class="math notranslate nohighlight">\(\frac{\partial s}{\partial y^*}\)</span>, and <span class="math notranslate nohighlight">\(\frac{\partial s}{\partial z^*}\)</span> can be calculated using the discrete forms below,</p>
+<div class="math notranslate nohighlight" id="equation-sx">
+<span class="eqno">(8)<a class="headerlink" href="#equation-sx" title="Permalink to this equation">¶</a></span>\[\frac{\partial s}{\partial x^*} = - \frac{\frac{\Delta z}{\Delta x}|_{s}} {\frac{\Delta z}{\Delta s}}\]</div>
+<div class="math notranslate nohighlight" id="equation-sy">
+<span class="eqno">(9)<a class="headerlink" href="#equation-sy" title="Permalink to this equation">¶</a></span>\[\frac{\partial s}{\partial y^*} = - \frac{\frac{\Delta z}{\Delta y}|_{s}} {\frac{\Delta z}{\Delta s}}\]</div>
+<div class="math notranslate nohighlight" id="equation-sz">
+<span class="eqno">(10)<a class="headerlink" href="#equation-sz" title="Permalink to this equation">¶</a></span>\[\frac{\partial s}{\partial z^*} = \frac{1}{\frac{\Delta z}{\Delta s}}\]</div>
+<p>for given <span class="math notranslate nohighlight">\(z(x,y,s)\)</span>.</p>
 </div>
 
 
