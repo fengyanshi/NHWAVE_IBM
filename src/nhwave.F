@@ -93,7 +93,8 @@
 !    generate grids
 !
      call generate_grid
-!
+
+
 !    read bathymetry
 !
 # if defined(LANDSLIDE_COMPREHENSIVE)
@@ -101,6 +102,7 @@
 # else
      call read_bathymetry
 # endif
+!
 !
 !    initialize model run
 !

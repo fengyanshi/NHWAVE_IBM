@@ -236,7 +236,9 @@
                                                 UpWp,PresForceX,PresForceY,PresForceZ,Pdiff,DelxSl,DelySl
 ! ROXSI
 
-      real(SP), dimension(:,:,:), allocatable :: DelxS, DelyS, DelzS
+      real(SP), dimension(:,:,:), allocatable :: DelxS, DelyS, DelzS, &
+                                                 DeltS, DeltSc
+      real(SP),dimension(:,:,:),allocatable :: z_face,z_center,z_face0,z_center0
 
 
 !     real(SP), dimension(:,:,:,:), allocatable :: UGrad,VGrad,WGrad  ! deleted by Cheng, they are arrays never used.

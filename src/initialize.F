@@ -1497,7 +1497,11 @@
               DelxSl(Mloc,Nloc,Kloc1),DelySl(Mloc,Nloc,Kloc1))
 
 ! ROXSI
-    ALLOCATE(DelxS(Mloc,Nloc,Kloc1),DelyS(Mloc,Nloc,Kloc1),DelzS(Mloc,Nloc,Kloc1))
+    ALLOCATE(DelxS(Mloc,Nloc,Kloc1),DelyS(Mloc,Nloc,Kloc1),DelzS(Mloc,Nloc,Kloc1), & 
+             DeltS(Mloc,Nloc,Kloc1),DeltSc(Mloc,Nloc,Kloc))
+
+    ALLOCATE(z_face(Mloc,Nloc,Kloc1),z_face0(Mloc,Nloc,Kloc1),z_center(Mloc,Nloc,Kloc), &
+             z_center0(Mloc,Nloc,Kloc))
 
      ! fluxes for construction at cell faces    
      ALLOCATE(UxL(Mloc1,Nloc,Kloc),UxR(Mloc1,Nloc,Kloc),VxL(Mloc1,Nloc,Kloc),VxR(Mloc1,Nloc,Kloc), &

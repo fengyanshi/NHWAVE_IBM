@@ -99,6 +99,11 @@ In the general s-coordinate system, :math:`\frac{\partial s}{\partial x^*}`,  :m
 
    \frac{\partial s}{\partial z^*} = \frac{1}{\frac{\Delta z}{\Delta s}}
 
-for given :math:`z(x,y,s)`.
+.. math::
+   :label: st
+
+   \frac{\partial s}{\partial t^*} = - \frac{\frac{\Delta z}{\Delta t}|_{s}} {\frac{\Delta z}{\Delta s}}
+
+for given :math:`z(x,y,s,t)`.
 
 

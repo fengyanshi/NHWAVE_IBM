@@ -77,7 +77,7 @@ CONTAINS
     REAL :: C_upper, C_lower, A_upper, A_lower
       C_upper = 1.0
       C_lower = ZERO
-      A_upper = 0.5
+      A_upper = 1.0
       A_lower = ZERO
 
      do k = 1,Kloc
@@ -95,37 +95,61 @@ CONTAINS
 
 !   new sigma (s) 
 
-     DO K=Kbeg,Kend1
-       SIG(K) = C_upper * Sigma_original(K)**(A_upper) + C_lower * Sigma_original(K)**(A_lower)
+     if (Ivgrd==1) then
+     do k = 1,Kloc
+     dsig(k) = 1.0/float(Kglob)
+     enddo
+     elseif(Ivgrd==2) then
+     dsig(Kbeg) = (Grd_R-1.0)/(Grd_R**float(Kglob)-1.0)
+     do k = Kbeg+1,Kend
+     dsig(k) = dsig(k-1)*Grd_R
+     enddo
+
+     do k = 1,Nghost
+     dsig(Kbeg-k) = dsig(Kbeg+k-1)
+     enddo
+
+     do k = 1,Nghost
+     dsig(Kend+k) = dsig(Kend-k+1)
+     enddo
+     endif
+
+     sig(Kbeg) = Zero
+     do k = Kbeg+1,Kloc1
+     sig(k) = sig(k-1)+dsig(k-1)
+     sigc(k-1) = sig(k-1)+0.5*dsig(k-1)
+     enddo
+     do k = Kbeg-1,1,-1
+     sig(k) = sig(k+1)-dsig(k)
+     sigc(k) = sig(k+1)-0.5*dsig(k)
+     enddo
+
+! initialize z_face and z_center
+
+     DO J=1,Nloc
+     DO I=1,Mloc
+        DO K=Kbeg,Kend1
+          z_face(I,J,K)=-Hc(I,J)+(K-Kbeg)*D(I,J)/(Kend1-Kbeg)
+        ENDDO
+
+   ! ghost cells
+        DO K=1,Kbeg-1
+          z_face(I,J,K) = z_face(I,K,Kbeg) - D(I,J)/(Kend1-Kbeg)*(Kbeg-K)
+        ENDDO
+        DO K=Kend1+1,Kloc1
+          z_face(I,J,K) = z_face(I,K,Kend) + D(I,J)/(Kend1-Kbeg)*(K-Kend1)
+        ENDDO
+
+        DO K=1,Kloc
+          z_center(I,J,K)=0.5*(z_face(I,J,K)+z_face(I,J,K+1))
+        ENDDO
+     ENDDO
      ENDDO
 
-!  make constant for ghost cells
-     DO K=Kend1+1,Kloc1
-        SIG(K)=SIG(Kend1)+(K-Kend1)*(SIG(Kend1)-SIG(Kend1-1))
-     ENDDO     
-     DO K=Kbeg-1,1,-1
-        SIG(K)=SIG(Kbeg)+(K-Kbeg)*(SIG(Kbeg+1)-SIG(Kbeg))
-     ENDDO
-
-     DO K=1,Kloc
-        DSIG(K) = SIG(K+1)-SIG(K)
-     ENDDO
-
-     DO K=1,Kloc
-       SIGC(K)= 0.5*(SIG(K)+SIG(K+1))
-     ENDDO
-
-!     print*, SIG
-!     print*, SIGC
-!     print*,DSIG
-!    STOP
 
 !
 !    vertical grid, this part was from initialize.F subroutine generate_grid
 !
-
-    D=10.0
-    Hc=10.0
 
 ! initialize z_face and z_center
 

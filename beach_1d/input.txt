@@ -11,7 +11,7 @@ RESULT_FOLDER = /Users/fengyanshi/TMP/tmp1/
 ! cell numbers
 Mglob = 400
 Nglob = 3
-Kglob = 6
+Kglob = 15
 
 ! --------------------PROCESSOR NUMBER-------------------------
 PX = 4
