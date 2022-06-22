@@ -74,6 +74,13 @@ results in
 :math:`\underline{()}` represents modifications needed for the new s-coordinate. 
 
 
+.. IMPORTANT:: Introduce :math:`z_s` function!
+
+.. figure:: images/s-coor.png
+    :align: center
+    :alt: alternate text
+    :figclass: align-center
+
 To get :math:`\frac{\partial s}{\partial x^*}`,  :math:`\frac{\partial s}{\partial y^*}`, :math:`\frac{\partial s}{\partial z^*}`, and :math:`\frac{\partial s}{\partial t^*}` needed by the momentum equations and the pressure Poisson equation, we introduce :math:`z_s` function which describes :math:`z`-location in the s-coordinate system :math:`z_s(x,y,s,t)`, 
 
 

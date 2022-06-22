@@ -70,6 +70,13 @@
 <div class="math notranslate nohighlight" id="equation-pressure">
 <span class="eqno">(7)<a class="headerlink" href="#equation-pressure" title="Permalink to this equation">¶</a></span>\[\begin{split}\frac{\partial}{\partial x} \left [ \frac{\partial p}{\partial x}+\frac{\partial p}{\partial s} \frac{\partial s}{\partial x^*} \right ] &amp; +  \frac{\partial}{\partial y} \left [ \frac{\partial p}{\partial y}+\frac{\partial p}{\partial s} \frac{\partial s}{\partial y^*} \right ] + \frac{\partial }{\partial s} \left ( \frac{\partial p}{\partial x} \right) \frac{\partial s}{\partial x^*} + \frac{\partial }{\partial s} \left ( \frac{\partial p}{\partial y} \right) \frac{\partial s}{\partial y^*} \\ &amp; +  \left[  \left (\frac{\partial s}{\partial x^*} \right )^2+\left ( \frac{\partial s}{\partial y^*} \right )^2+ \underline{(\frac{\partial s}{\partial z^*})^2}  \right] \frac{\partial }{\partial s} \left( \frac{\partial p}{\partial s} \right) \\ &amp;= \frac{\rho}{\Delta t} \left( \frac{\partial u^*}{\partial x} +\frac{\partial u^*}{\partial s} \frac{\partial s}{\partial x^*} + \frac{\partial v^*}{\partial y} +\frac{\partial v^*}{\partial s} \frac{\partial s}{\partial y^*} + \underline{\frac{\partial s}{\partial z^*}} \frac{\partial w^*}{\partial s} \right)\end{split}\]</div>
 <p><span class="math notranslate nohighlight">\(\underline{()}\)</span> represents modifications needed for the new s-coordinate.</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">Introduce <span class="math notranslate nohighlight">\(z_s\)</span> function!</p>
+</div>
+<div class="align-center figure">
+<img alt="alternate text" src="_images/s-coor.png" />
+</div>
 <p>To get <span class="math notranslate nohighlight">\(\frac{\partial s}{\partial x^*}\)</span>,  <span class="math notranslate nohighlight">\(\frac{\partial s}{\partial y^*}\)</span>, <span class="math notranslate nohighlight">\(\frac{\partial s}{\partial z^*}\)</span>, and <span class="math notranslate nohighlight">\(\frac{\partial s}{\partial t^*}\)</span> needed by the momentum equations and the pressure Poisson equation, we introduce <span class="math notranslate nohighlight">\(z_s\)</span> function which describes <span class="math notranslate nohighlight">\(z\)</span>-location in the s-coordinate system <span class="math notranslate nohighlight">\(z_s(x,y,s,t)\)</span>,</p>
 <p>The derivatives of <span class="math notranslate nohighlight">\(s\)</span> with respect to <span class="math notranslate nohighlight">\((x^*,y^*,z^*,t^*)\)</span> can be derived as, for example,</p>
 <div class="math notranslate nohighlight">

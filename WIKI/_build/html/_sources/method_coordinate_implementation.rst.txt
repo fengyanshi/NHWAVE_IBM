@@ -31,9 +31,9 @@ The code coordinate module was in mod\_coordinate.F. The module contains the ori
 
 * add GAMMA\_s in mod_global.F and initialize.F
 
-* move the calculation of :math:`dsig` to  SUBROUTINE COORDINATE\_INITIALIZATION to generalize s-coordinate. NOTE: we still keep :math:`dsig` but for a generic :math:`\Delta s`. In this way, the code for solving the continuity equation does not need to change. 
+* move the calculation of :math:`dsig` to  SUBROUTINE COORDINATE\_INITIALIZATION to generalize s-coordinate. NOTE: we still keep :math:`dsig` but for a generic :math:`\Delta s`. In this way, the code for solving all equations containing :math:`dsig` and associated derivative terms does not need any change. 
 
-* in SUBTOUTINE SIGMA\_TRANSFORM in mod_coordinate.F, calculate :math:`\frac{\partial s}{\partial x^*}`,  :math:`\frac{\partial s}{\partial y^*}`, and :math:`\frac{\partial s}{\partial z^*}` using :eq:`sx`, :eq:`sy`, and :eq:`sz`.
+* in SUBTOUTINE SIGMA\_TRANSFORM in mod_coordinate.F, calculate :math:`\frac{\partial s}{\partial x^*}`,  :math:`\frac{\partial s}{\partial y^*}`, :math:`\frac{\partial s}{\partial z^*}`, and :math:`\frac{\partial s}{\partial t^*}` using :eq:`sx`, :eq:`sy`, :eq:`sz`, and :eq:`st`.
 
 * remove get_omega(R1) in the original nhwave.F, in which :math:`\omega` is solved using the 3D mass conservation equation (1). 
 
@@ -49,8 +49,7 @@ where :math:`D_{,t}` has been calculated in subroutine eval\_duvw, named R1.
 
 * in SUBROUTINE eval\_duvw, add :math:`\Gamma_s` as extra terms in the momentum equations. Specifically, add :math:`u_{\alpha} \Gamma_s` and :math:`w \Gamma_s` in :math:`R2`, :math:`R3` and :math:`R4`, which are combination of advection, Coriolis, horizontal diffusion and extra forcing terms.   
 
-* modify the pressure Poisson solver based on :eq:`pressure`.
-
+* in pressure.F, modify the pressure Poisson solver based on :eq:`pressure`. Specifically, in SUBROUTINE\_GENERATE\_COEF\_RHS, remove DelxS, DelyS, and DelzS because they have been calculated using the generic s-coordinate in SUBTOUTINE SIGMA\_TRANSFORM. 
 
 
 
