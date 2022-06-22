@@ -42,7 +42,7 @@ or
    \Gamma_s = & D_{,t} + u_\alpha D_{,\alpha} + \tilde{\omega}_{,s} - D (u_{\alpha,s} s_{,\alpha} + w_{,s} s_{,z}) \\
        =& D_{,t} + (u_\alpha D)_{,\alpha} + \tilde{\omega}_{,s}
 
-Which is the extended forms of :eq:`mass`. The current version of NHWAVE calculates the normal velocity :math:`\omega` (:math:`\tilde{\omega}` here) using :eq:`mass` (without :math:`\Gamma_s`), following the method used in typical hydrostatic ocean models such as ROMS and FVCOM. The method won't work because :math:`\Gamma_s = 0` may not hold for a generic s-coordinate. In this study, we calculate :math:`\tilde{\omega}` using :eq:`omega` and solve :math:`\Gamma_s` using :eq:`mass`.  
+which is the extended forms of :eq:`mass`. The current version of NHWAVE calculates the normal velocity :math:`\omega` (:math:`\tilde{\omega}` here) using :eq:`mass` (:math:`\Gamma_s` = 0), following the method used in typical hydrostatic ocean models such as ROMS and FVCOM. The method won't work because :math:`\Gamma_s = 0` may not hold for a generic s-coordinate. In this study, we calculate :math:`\tilde{\omega}` using :eq:`omega` and solve :math:`\Gamma_s` using :eq:`mass`.  
 
 
 To get the pressure Poisson equation, we substitute the pressure-corrected velocities 
@@ -64,7 +64,7 @@ into the 3D mass conservation equation
 
    \frac{\partial u}{\partial x} + \frac{\partial u}{\partial s} \frac{\partial s}{\partial x^*} + \frac{\partial v}{\partial y} + \frac{\partial v}{\partial s} \frac{\partial s}{\partial y^*} + \frac{\partial s}{\partial z^*} \frac{\partial w}{\partial s} = 0
 
-results in
+resulting in
 
 .. math::
   :label: pressure
@@ -130,6 +130,6 @@ The discretized forms are
 
    \frac{\partial s}{\partial t^*} = - \frac{\frac{\Delta z_s}{\Delta t}|_{s}} {\frac{\Delta z_s}{\Delta s}}
 
-for given :math:`z_s(x,y,s,t)`. :math:`|_s` is used to emphasize the derivatives are calculated with constant :math:`s`. 
+for given :math:`z_s(x,y,s,t)`. :math:`|_s` is used to emphasize the derivatives are calculated with constant :math:`s`. See :ref:`implement_s_coor` for detailed implementation. 
 
 

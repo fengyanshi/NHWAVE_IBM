@@ -1,3 +1,5 @@
+.. _implement_s_coor:
+
 Implementation of s-coordinate 
 ======================================================
 
