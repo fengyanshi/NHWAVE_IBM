@@ -55,16 +55,7 @@
 <div class="math notranslate nohighlight" id="equation-gamma-s1">
 <span class="eqno">(6)<a class="headerlink" href="#equation-gamma-s1" title="Permalink to this equation">¶</a></span>\[\begin{split}\Gamma_s = &amp; D_{,t} + u_\alpha D_{,\alpha} + \tilde{\omega}_{,s} - D (u_{\alpha,s} s_{,\alpha} + w_{,s} s_{,z}) \\
     =&amp; D_{,t} + (u_\alpha D)_{,\alpha} + \tilde{\omega}_{,s}\end{split}\]</div>
-<p>Which is, in fact, <a class="reference internal" href="#equation-mass">(1)</a>. There are two options to calculate <span class="math notranslate nohighlight">\(\Gamma_s\)</span>.</p>
-<ol class="arabic simple">
-<li>To evaluate <span class="math notranslate nohighlight">\(\Gamma_s\)</span> at the same time level, replace <span class="math notranslate nohighlight">\(D_{,t}\)</span> with the divergence of mass flux based on the continuity equation <span class="math notranslate nohighlight">\(D_{,t} = - D \bar{u}_{\alpha,\alpha}\)</span>, where <span class="math notranslate nohighlight">\(\bar{u}_\alpha\)</span> represents the depth averaged velocity,</li>
-</ol>
-<div class="math notranslate nohighlight">
-\[\Gamma_s = [D(u_\alpha - \bar{u}_\alpha)]_{,\alpha} + \tilde{\omega}_{,s}\]</div>
-<ol class="arabic simple" start="2">
-<li>The other option is to calculate <span class="math notranslate nohighlight">\(\Gamma_s\)</span> using (1) directly. It turned out that using the latter option is more accurate because <span class="math notranslate nohighlight">\(\tilde{\omega}\)</span> is calculated in <a class="reference internal" href="#equation-omega">(4)</a>. <span class="math notranslate nohighlight">\(s_{,t}\)</span> is closely related to <span class="math notranslate nohighlight">\(D_{,t}\)</span>, guaranteeing mass conservation.</li>
-</ol>
-<p>There are two choices of <span class="math notranslate nohighlight">\(s\)</span> coordinate system in the model.</p>
+<p>Which is the extended forms of <a class="reference internal" href="#equation-mass">(1)</a>. The current version of NHWAVE calculates the normal velocity <span class="math notranslate nohighlight">\(\omega\)</span> (<span class="math notranslate nohighlight">\(\tilde{\omega}\)</span> here) using <a class="reference internal" href="#equation-mass">(1)</a> (without <span class="math notranslate nohighlight">\(\Gamma_s\)</span>), following the method used in typical hydrostatic ocean models such as ROMS and FVCOM. The method won’t work because <span class="math notranslate nohighlight">\(\Gamma_s = 0\)</span> may not hold for a generic s-coordinate. In this study, we calculate <span class="math notranslate nohighlight">\(\tilde{\omega}\)</span> using <a class="reference internal" href="#equation-omega">(4)</a> and solve <span class="math notranslate nohighlight">\(\Gamma_s\)</span> using <a class="reference internal" href="#equation-mass">(1)</a>.</p>
 <p>To get the pressure Poisson equation, we substitute the pressure-corrected velocities</p>
 <div class="math notranslate nohighlight">
 \[u^{(k)} = u^* - \frac{\Delta t}{\rho} (\frac{\partial p}{\partial x} + \frac{\partial p}{\partial s}\frac{\partial s}{\partial x^*})^{(k)}\]</div>
@@ -78,17 +69,18 @@
 <p>results in</p>
 <div class="math notranslate nohighlight" id="equation-pressure">
 <span class="eqno">(7)<a class="headerlink" href="#equation-pressure" title="Permalink to this equation">¶</a></span>\[\begin{split}\frac{\partial}{\partial x} \left [ \frac{\partial p}{\partial x}+\frac{\partial p}{\partial s} \frac{\partial s}{\partial x^*} \right ] &amp; +  \frac{\partial}{\partial y} \left [ \frac{\partial p}{\partial y}+\frac{\partial p}{\partial s} \frac{\partial s}{\partial y^*} \right ] + \frac{\partial }{\partial s} \left ( \frac{\partial p}{\partial x} \right) \frac{\partial s}{\partial x^*} + \frac{\partial }{\partial s} \left ( \frac{\partial p}{\partial y} \right) \frac{\partial s}{\partial y^*} \\ &amp; +  \left[  \left (\frac{\partial s}{\partial x^*} \right )^2+\left ( \frac{\partial s}{\partial y^*} \right )^2+ \underline{(\frac{\partial s}{\partial z^*})^2}  \right] \frac{\partial }{\partial s} \left( \frac{\partial p}{\partial s} \right) \\ &amp;= \frac{\rho}{\Delta t} \left( \frac{\partial u^*}{\partial x} +\frac{\partial u^*}{\partial s} \frac{\partial s}{\partial x^*} + \frac{\partial v^*}{\partial y} +\frac{\partial v^*}{\partial s} \frac{\partial s}{\partial y^*} + \underline{\frac{\partial s}{\partial z^*}} \frac{\partial w^*}{\partial s} \right)\end{split}\]</div>
-<p><span class="math notranslate nohighlight">\(\underline{()}\)</span> represents modifications needed for the new coordinate.</p>
-<p>In the general s-coordinate system, <span class="math notranslate nohighlight">\(\frac{\partial s}{\partial x^*}\)</span>,  <span class="math notranslate nohighlight">\(\frac{\partial s}{\partial y^*}\)</span>, and <span class="math notranslate nohighlight">\(\frac{\partial s}{\partial z^*}\)</span> can be calculated using the discrete forms below,</p>
+<p><span class="math notranslate nohighlight">\(\underline{()}\)</span> represents modifications needed for the new s-coordinate.</p>
+<p>To get <span class="math notranslate nohighlight">\(\frac{\partial s}{\partial x^*}\)</span>,  <span class="math notranslate nohighlight">\(\frac{\partial s}{\partial y^*}\)</span>, <span class="math notranslate nohighlight">\(\frac{\partial s}{\partial z^*}\)</span>, and <span class="math notranslate nohighlight">\(\frac{\partial s}{\partial t^*}\)</span> needed by the momentum equations and the pressure Poisson equation, we introduce a <span class="math notranslate nohighlight">\(z_s\)</span> function which describes <span class="math notranslate nohighlight">\(z\)</span>-location in the s-coordinate system <span class="math notranslate nohighlight">\(z_s(x,y,s,t)\)</span>,</p>
+<p>The derivatives of <span class="math notranslate nohighlight">\(s\)</span> with respect to <span class="math notranslate nohighlight">\((x^*,y^*,z^*,t^*)\)</span> can be expressed in the discretized forms by</p>
 <div class="math notranslate nohighlight" id="equation-sx">
-<span class="eqno">(8)<a class="headerlink" href="#equation-sx" title="Permalink to this equation">¶</a></span>\[\frac{\partial s}{\partial x^*} = - \frac{\frac{\Delta z}{\Delta x}|_{s}} {\frac{\Delta z}{\Delta s}}\]</div>
+<span class="eqno">(8)<a class="headerlink" href="#equation-sx" title="Permalink to this equation">¶</a></span>\[\frac{\partial s}{\partial x^*} = - \frac{\frac{\Delta z_s}{\Delta x}|_{s}} {\frac{\Delta z_s}{\Delta s}}\]</div>
 <div class="math notranslate nohighlight" id="equation-sy">
-<span class="eqno">(9)<a class="headerlink" href="#equation-sy" title="Permalink to this equation">¶</a></span>\[\frac{\partial s}{\partial y^*} = - \frac{\frac{\Delta z}{\Delta y}|_{s}} {\frac{\Delta z}{\Delta s}}\]</div>
+<span class="eqno">(9)<a class="headerlink" href="#equation-sy" title="Permalink to this equation">¶</a></span>\[\frac{\partial s}{\partial y^*} = - \frac{\frac{\Delta z_s}{\Delta y}|_{s}} {\frac{\Delta z_s}{\Delta s}}\]</div>
 <div class="math notranslate nohighlight" id="equation-sz">
-<span class="eqno">(10)<a class="headerlink" href="#equation-sz" title="Permalink to this equation">¶</a></span>\[\frac{\partial s}{\partial z^*} = \frac{1}{\frac{\Delta z}{\Delta s}}\]</div>
+<span class="eqno">(10)<a class="headerlink" href="#equation-sz" title="Permalink to this equation">¶</a></span>\[\frac{\partial s}{\partial z^*} = \frac{1}{\frac{\Delta z_s}{\Delta s}}\]</div>
 <div class="math notranslate nohighlight" id="equation-st">
-<span class="eqno">(11)<a class="headerlink" href="#equation-st" title="Permalink to this equation">¶</a></span>\[\frac{\partial s}{\partial t^*} = - \frac{\frac{\Delta z}{\Delta t}|_{s}} {\frac{\Delta z}{\Delta s}}\]</div>
-<p>for given <span class="math notranslate nohighlight">\(z(x,y,s,t)\)</span>.</p>
+<span class="eqno">(11)<a class="headerlink" href="#equation-st" title="Permalink to this equation">¶</a></span>\[\frac{\partial s}{\partial t^*} = - \frac{\frac{\Delta z_s}{\Delta t}|_{s}} {\frac{\Delta z_s}{\Delta s}}\]</div>
+<p>for given <span class="math notranslate nohighlight">\(z_s(x,y,s,t)\)</span>. <span class="math notranslate nohighlight">\(|_s\)</span> is used to emphasize the derivatives are calculated with constant <span class="math notranslate nohighlight">\(s\)</span>.</p>
 </div>
 
 

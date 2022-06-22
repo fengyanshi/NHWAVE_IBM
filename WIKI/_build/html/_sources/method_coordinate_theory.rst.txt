@@ -42,16 +42,8 @@ or
    \Gamma_s = & D_{,t} + u_\alpha D_{,\alpha} + \tilde{\omega}_{,s} - D (u_{\alpha,s} s_{,\alpha} + w_{,s} s_{,z}) \\
        =& D_{,t} + (u_\alpha D)_{,\alpha} + \tilde{\omega}_{,s}
 
-Which is, in fact, :eq:`mass`. There are two options to calculate :math:`\Gamma_s`. 
+Which is the extended forms of :eq:`mass`. The current version of NHWAVE calculates the normal velocity :math:`\omega` (:math:`\tilde{\omega}` here) using :eq:`mass` (without :math:`\Gamma_s`), following the method used in typical hydrostatic ocean models such as ROMS and FVCOM. The method won't work because :math:`\Gamma_s = 0` may not hold for a generic s-coordinate. In this study, we calculate :math:`\tilde{\omega}` using :eq:`omega` and solve :math:`\Gamma_s` using :eq:`mass`.  
 
-(1) To evaluate :math:`\Gamma_s` at the same time level, replace :math:`D_{,t}` with the divergence of mass flux based on the continuity equation :math:`D_{,t} = - D \bar{u}_{\alpha,\alpha}`, where :math:`\bar{u}_\alpha` represents the depth averaged velocity,
-
-.. math::
-   \Gamma_s = [D(u_\alpha - \bar{u}_\alpha)]_{,\alpha} + \tilde{\omega}_{,s} 
-
-(2) The other option is to calculate :math:`\Gamma_s` using (1) directly. It turned out that using the latter option is more accurate because :math:`\tilde{\omega}` is calculated in :eq:`omega`. :math:`s_{,t}` is closely related to :math:`D_{,t}`, guaranteeing mass conservation. 
-
-There are two choices of :math:`s` coordinate system in the model.
 
 To get the pressure Poisson equation, we substitute the pressure-corrected velocities 
 
@@ -79,31 +71,34 @@ results in
 
   \frac{\partial}{\partial x} \left [ \frac{\partial p}{\partial x}+\frac{\partial p}{\partial s} \frac{\partial s}{\partial x^*} \right ] & +  \frac{\partial}{\partial y} \left [ \frac{\partial p}{\partial y}+\frac{\partial p}{\partial s} \frac{\partial s}{\partial y^*} \right ] + \frac{\partial }{\partial s} \left ( \frac{\partial p}{\partial x} \right) \frac{\partial s}{\partial x^*} + \frac{\partial }{\partial s} \left ( \frac{\partial p}{\partial y} \right) \frac{\partial s}{\partial y^*} \\ & +  \left[  \left (\frac{\partial s}{\partial x^*} \right )^2+\left ( \frac{\partial s}{\partial y^*} \right )^2+ \underline{(\frac{\partial s}{\partial z^*})^2}  \right] \frac{\partial }{\partial s} \left( \frac{\partial p}{\partial s} \right) \\ &= \frac{\rho}{\Delta t} \left( \frac{\partial u^*}{\partial x} +\frac{\partial u^*}{\partial s} \frac{\partial s}{\partial x^*} + \frac{\partial v^*}{\partial y} +\frac{\partial v^*}{\partial s} \frac{\partial s}{\partial y^*} + \underline{\frac{\partial s}{\partial z^*}} \frac{\partial w^*}{\partial s} \right)
 
-:math:`\underline{()}` represents modifications needed for the new coordinate. 
+:math:`\underline{()}` represents modifications needed for the new s-coordinate. 
 
 
-In the general s-coordinate system, :math:`\frac{\partial s}{\partial x^*}`,  :math:`\frac{\partial s}{\partial y^*}`, and :math:`\frac{\partial s}{\partial z^*}` can be calculated using the discrete forms below,
+To get :math:`\frac{\partial s}{\partial x^*}`,  :math:`\frac{\partial s}{\partial y^*}`, :math:`\frac{\partial s}{\partial z^*}`, and :math:`\frac{\partial s}{\partial t^*}` needed by the momentum equations and the pressure Poisson equation, we introduce a :math:`z_s` function which describes :math:`z`-location in the s-coordinate system :math:`z_s(x,y,s,t)`, 
+
+
+The derivatives of :math:`s` with respect to :math:`(x^*,y^*,z^*,t^*)` can be expressed in the discretized forms by
 
 .. math::
    :label: sx
 
-   \frac{\partial s}{\partial x^*} = - \frac{\frac{\Delta z}{\Delta x}|_{s}} {\frac{\Delta z}{\Delta s}}
+   \frac{\partial s}{\partial x^*} = - \frac{\frac{\Delta z_s}{\Delta x}|_{s}} {\frac{\Delta z_s}{\Delta s}}
 
 .. math::
    :label: sy
 
-   \frac{\partial s}{\partial y^*} = - \frac{\frac{\Delta z}{\Delta y}|_{s}} {\frac{\Delta z}{\Delta s}}
+   \frac{\partial s}{\partial y^*} = - \frac{\frac{\Delta z_s}{\Delta y}|_{s}} {\frac{\Delta z_s}{\Delta s}}
 
 .. math::
    :label: sz
 
-   \frac{\partial s}{\partial z^*} = \frac{1}{\frac{\Delta z}{\Delta s}}
+   \frac{\partial s}{\partial z^*} = \frac{1}{\frac{\Delta z_s}{\Delta s}}
 
 .. math::
    :label: st
 
-   \frac{\partial s}{\partial t^*} = - \frac{\frac{\Delta z}{\Delta t}|_{s}} {\frac{\Delta z}{\Delta s}}
+   \frac{\partial s}{\partial t^*} = - \frac{\frac{\Delta z_s}{\Delta t}|_{s}} {\frac{\Delta z_s}{\Delta s}}
 
-for given :math:`z(x,y,s,t)`.
+for given :math:`z_s(x,y,s,t)`. :math:`|_s` is used to emphasize the derivatives are calculated with constant :math:`s`. 
 
 
