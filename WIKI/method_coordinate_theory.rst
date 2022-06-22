@@ -74,10 +74,34 @@ results in
 :math:`\underline{()}` represents modifications needed for the new s-coordinate. 
 
 
-To get :math:`\frac{\partial s}{\partial x^*}`,  :math:`\frac{\partial s}{\partial y^*}`, :math:`\frac{\partial s}{\partial z^*}`, and :math:`\frac{\partial s}{\partial t^*}` needed by the momentum equations and the pressure Poisson equation, we introduce a :math:`z_s` function which describes :math:`z`-location in the s-coordinate system :math:`z_s(x,y,s,t)`, 
+To get :math:`\frac{\partial s}{\partial x^*}`,  :math:`\frac{\partial s}{\partial y^*}`, :math:`\frac{\partial s}{\partial z^*}`, and :math:`\frac{\partial s}{\partial t^*}` needed by the momentum equations and the pressure Poisson equation, we introduce :math:`z_s` function which describes :math:`z`-location in the s-coordinate system :math:`z_s(x,y,s,t)`, 
 
 
-The derivatives of :math:`s` with respect to :math:`(x^*,y^*,z^*,t^*)` can be expressed in the discretized forms by
+The derivatives of :math:`s` with respect to :math:`(x^*,y^*,z^*,t^*)` can be derived as, for example, 
+
+.. math::
+
+   \frac{\partial z_s}{\partial x^*} = \frac{\partial z_s}{\partial x} + \frac{\partial z_s}{\partial s} \frac{\partial s}{\partial x^*} = 0
+
+or
+
+.. math::
+
+    \frac{\partial s}{\partial x^*} = - \frac{\partial z_s}{\partial x} / \frac{\partial z_s}{\partial s}
+
+Similarly,
+
+.. math::
+
+    \frac{\partial s}{\partial y^*} = - \frac{\partial z_s}{\partial y} / \frac{\partial z_s}{\partial s}
+
+and 
+
+.. math::
+
+    \frac{\partial s}{\partial t^*} = - \frac{\partial z_s}{\partial t} / \frac{\partial z_s}{\partial s}
+
+The discretized forms are
 
 .. math::
    :label: sx
