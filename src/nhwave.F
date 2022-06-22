@@ -53,6 +53,7 @@
      program NHWAVE
 !
      use global
+     USE COORDINATE_MODULE
 # if defined (OBSTACLE)
      USE IBM_MODULE
 # endif
@@ -106,7 +107,13 @@
 !
 !    initialize model run
 !
+
+! s-coordinate ROXSI
+
+     CALL COORDINATE_INITIALIZATION
+
      call initial
+
 
 # if defined (OBSTACLE)
 

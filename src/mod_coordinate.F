@@ -124,8 +124,8 @@ CONTAINS
 !    vertical grid, this part was from initialize.F subroutine generate_grid
 !
 
-    D=10.0
-    Hc=10.0
+!    D=10.0
+!    Hc=10.0
 
 ! initialize z_face and z_center
 
@@ -134,7 +134,7 @@ CONTAINS
 
    
         DO K=1,Kloc1
-          z_face(I,J,K)=-Hc(I,J)+D(I,J)*SIG(K)
+          z_face(I,J,K)=-Hc(I,J)+Hc(I,J)*SIG(K)
         ENDDO
 
         DO K=1,Kloc

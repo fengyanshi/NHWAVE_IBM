@@ -1714,9 +1714,6 @@
      yc(j) = y(j+1)-0.5*dy
      enddo
 
-! s-coordinate ROXSI
-
-     CALL COORDINATE_INITIALIZATION
 
 !
 !    vertical grid, roxsi: move this part to mod_coordinate.F for generalized s-coordinate
