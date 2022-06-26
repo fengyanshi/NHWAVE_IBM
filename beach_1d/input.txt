@@ -5,13 +5,13 @@
 TITLE = open_channel_flow_angle
 
 ! ---------------- RESULT_FOLDER-------------------------------
-RESULT_FOLDER = /Users/fengyanshi/TMP/tmp1/
+RESULT_FOLDER = /Users/fengyanshi/TMP/tmp2/
 
 ! --------------------DIMENSION---------------------------------
 ! cell numbers
 Mglob = 400
 Nglob = 3
-Kglob = 15
+Kglob = 10
 
 ! --------------------PROCESSOR NUMBER-------------------------
 PX = 4
@@ -27,6 +27,17 @@ PLOT_INTV = 1.0
 SCREEN_INTV = 1.0
 
 ! ------------------------GRID----------------------------------
+! s-coordinate
+EXPONENTIAL = F
+  ! a_upper <= 7.0
+C_upper = 1.0
+C_lower = 0.0
+A_upper = 1.0
+A_lower = 0.0
+
+HYPERBOLIC = T
+HYPER_alpha = 1.5
+
 ! grid sizes
 DX = 1.0
 DY = 1.0

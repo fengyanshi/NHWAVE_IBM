@@ -46,6 +46,9 @@ MODULE COORDINATE_MODULE
                        u_bar,v_bar,GAMMA_s,U,V,W,DX,DY,Omega,MASK,SP,HC,SMALL, &
                        Eta, DelxS,DelyS,DelzS, DeltS, DeltSc,z_face,z_face0, &
                        z_center, z_center0,DT
+# if defined (PARALLEL)
+    USE GLOBAL, ONLY: myid,ier
+# endif
                        
 
 
@@ -57,6 +60,7 @@ MODULE COORDINATE_MODULE
 
     IMPLICIT NONE
     SAVE
+    REAL,DIMENSION(:),ALLOCATABLE :: S_in_sigma,Ds_in_sigma
 
 
 CONTAINS
@@ -65,67 +69,98 @@ CONTAINS
 
     USE INPUT_Util
     IMPLICIT NONE
+    character(len=80) :: FILE_NAME
+    integer :: line,ierr
     INTEGER :: i,j,k,iglob,jglob,lglob
-    REAL :: Sigma_original(Kloc1),Dsig_original(Kloc)
+    LOGICAL :: EXPONENTIAL, HYPERBOLIC 
+    REAL(SP) :: C_upper, C_lower, A_upper, A_lower,HYPER_alpha,tmp1,tmp2
 
+    ALLOCATE(S_in_sigma(Kloc1),Ds_in_sigma(Kloc))
 
+     FILE_NAME='input.txt'
 
-    ! s-function, 1) kirby double-power
-    ! s = c_upper * sigma^A_upper + c_lower *sigma^A_lower
-    !  c_upper = 1, c_lower = 0, A_upper = 0.33
+     CALL GET_LOGICAL_VAL(EXPONENTIAL,FILE_NAME,'EXPONENTIAL',line)
+     IF(EXPONENTIAL)THEN
+       CALL GET_Float_VAL(C_upper,FILE_NAME,'C_upper',line)
+       CALL GET_Float_VAL(C_lower,FILE_NAME,'C_lower',line)
+       CALL GET_Float_VAL(A_upper,FILE_NAME,'A_upper',line)
+       CALL GET_Float_VAL(A_lower,FILE_NAME,'A_lower',line)
+     ENDIF
+     CALL GET_LOGICAL_VAL(HYPERBOLIC,FILE_NAME,'HYPERBOLIC',line)
+     IF(HYPERBOLIC)THEN
+       CALL GET_Float_VAL(HYPER_alpha,FILE_NAME,'HYPER_alpha',line)
+     ENDIF
 
-    REAL :: C_upper, C_lower, A_upper, A_lower
-      C_upper = 1.0
-      C_lower = ZERO
-      A_upper = 0.5
-      A_lower = ZERO
 
      do k = 1,Kloc
-     Dsig_original(k) = 1.0/float(Kglob)
+     Dsig(k) = 1.0/float(Kglob)
      enddo
 
-     Sigma_original(Kbeg) = Zero
+     Sig(Kbeg) = Zero
      do k = Kbeg+1,Kend1
-     Sigma_original(k) = Sigma_original(k-1)+Dsig_original(k-1)
+     Sig(k) = Sig(k-1)+Dsig(k-1)
      enddo
 
-!     do k = Kbeg-1,1,-1
-!     Sigma_original(k) = Sigma_original(k+1)-Dsig_original(k)
-!     enddo
-
-!   new sigma (s) 
-
-     DO K=Kbeg,Kend1
-       SIG(K) = C_upper * Sigma_original(K)**(A_upper) + C_lower * Sigma_original(K)**(A_lower)
-     ENDDO
-
-!  make constant for ghost cells
-     DO K=Kend1+1,Kloc1
-        SIG(K)=SIG(Kend1)+(K-Kend1)*(SIG(Kend1)-SIG(Kend1-1))
-     ENDDO     
-     DO K=Kbeg-1,1,-1
-        SIG(K)=SIG(Kbeg)+(K-Kbeg)*(SIG(Kbeg+1)-SIG(Kbeg))
-     ENDDO
-
-     DO K=1,Kloc
-        DSIG(K) = SIG(K+1)-SIG(K)
-     ENDDO
+     do k = Kbeg-1,1,-1
+     Sig(k) = Sig(k+1)-Dsig(k)
+     enddo
 
      DO K=1,Kloc
        SIGC(K)= 0.5*(SIG(K)+SIG(K+1))
      ENDDO
 
-!     print*, SIG
-!     print*, SIGC
-!     print*,DSIG
-!    STOP
+   IF(EXPONENTIAL)THEN
+
+!   s in sigma coordinate
+    ! s-function, 1) kirby double-power
+    ! s = c_upper * sigma^A_upper + c_lower *sigma^A_lower
+
+     DO K=Kbeg,Kend1
+       S_in_sigma(K) = C_upper * Sig(K)**(A_upper) + C_lower * Sig(K)**(A_lower)
+     ENDDO
+
+   ELSE IF (HYPERBOLIC) THEN
+
+    ! s-function, 2) kirby tanh
+    ! s = tanh(alpha*sigma) / tanh(alpha)
+
+     DO K=Kbeg,Kend1
+       tmp1=DTANH(HYPER_alpha)
+       tmp2=DTANH(HYPER_alpha*Sig(K))
+       S_in_sigma(K) = tmp2/tmp1
+     ENDDO
+
+   ELSE ! original sigma
+
+     DO K=Kbeg,Kend1
+       S_in_sigma(K)=Sig(K)
+     ENDDO
+
+   ENDIF
+
+!  make constant for ghost cells
+     DO K=Kend1+1,Kloc1
+        S_in_sigma(K)=S_in_sigma(Kend1)+(K-Kend1)*(S_in_sigma(Kend1)-S_in_sigma(Kend1-1))
+     ENDDO     
+     DO K=Kbeg-1,1,-1
+        S_in_sigma(K)=S_in_sigma(Kbeg)+(K-Kbeg)*(S_in_sigma(Kbeg+1)-S_in_sigma(Kbeg))
+     ENDDO
+
+     DO K=1,Kloc
+        Ds_in_sigma(K) = S_in_sigma(K+1)-S_in_sigma(K)
+     ENDDO
+
+!     if(myid==0)then
+!     do k=1,kloc
+!     print*, k-nghost,S_in_sigma(K),DTANH(HYPER_alpha),DTANH(HYPER_alpha*Sig(K))
+!     enddo
+!     endif
+!     stop
 
 !
 !    vertical grid, this part was from initialize.F subroutine generate_grid
 !
 
-!    D=10.0
-!    Hc=10.0
 
 ! initialize z_face and z_center
 
@@ -134,7 +169,7 @@ CONTAINS
 
    
         DO K=1,Kloc1
-          z_face(I,J,K)=-Hc(I,J)+Hc(I,J)*SIG(K)
+          z_face(I,J,K)=-Hc(I,J)+Hc(I,J)*S_in_sigma(K)
         ENDDO
 
         DO K=1,Kloc
@@ -143,14 +178,6 @@ CONTAINS
 
      ENDDO
      ENDDO
-
-
-!     print*,Mloc,Nloc,Kloc,Nghost
-!     print*,Hc(50,4),D(50,4)
-!     print*, z_face(50,4,1),z_face(50,4,2),z_face(50,4,3),z_face(50,4,4),z_face(50,4,5),z_face(50,4,6), &
-!             z_face(50,4,7),z_face(50,4,8),z_face(50,4,9),z_face(50,4,10),z_face(50,4,11)
-
-!    STOP
 
 
       RETURN
@@ -183,7 +210,7 @@ CONTAINS
 
    
         DO K=1,Kloc1
-          z_face(I,J,K)=-Hc(I,J)+D(I,J)*SIG(K)
+          z_face(I,J,K)=-Hc(I,J)+D(I,J)*S_in_sigma(K)
         ENDDO
 
         DO K=1,Kloc
@@ -194,25 +221,26 @@ CONTAINS
      ENDDO
 
 
-     DO J=1,Nloc
-     DO I=1,Mloc
-        DO K=Kbeg,Kend1
-          z_face(I,J,K)=-Hc(I,J)+(K-Kbeg)*D(I,J)/(Kend1-Kbeg)
-        ENDDO
+!  it was not removed last version
+!     DO J=1,Nloc
+!     DO I=1,Mloc
+!        DO K=Kbeg,Kend1
+!          z_face(I,J,K)=-Hc(I,J)+(K-Kbeg)*D(I,J)/(Kend1-Kbeg)
+!        ENDDO
 
    ! ghost cells
-        DO K=1,Kbeg-1
-          z_face(I,J,K) = z_face(I,K,Kbeg) - D(I,J)/(Kend1-Kbeg)*(Kbeg-K)
-        ENDDO
-        DO K=Kend1+1,Kloc1
-          z_face(I,J,K) = z_face(I,K,Kend) + D(I,J)/(Kend1-Kbeg)*(K-Kend1)
-        ENDDO
+!        DO K=1,Kbeg-1
+!         z_face(I,J,K) = z_face(I,K,Kbeg) - D(I,J)/(Kend1-Kbeg)*(Kbeg-K)
+!        ENDDO
+!        DO K=Kend1+1,Kloc1
+!          z_face(I,J,K) = z_face(I,K,Kend) + D(I,J)/(Kend1-Kbeg)*(K-Kend1)
+!        ENDDO
 
-        DO K=1,Kloc
-          z_center(I,J,K)=0.5*(z_face(I,J,K)+z_face(I,J,K+1))
-        ENDDO
-     ENDDO
-     ENDDO
+!        DO K=1,Kloc
+!          z_center(I,J,K)=0.5*(z_face(I,J,K)+z_face(I,J,K+1))
+!        ENDDO
+!     ENDDO
+!     ENDDO
 
 ! center points
 

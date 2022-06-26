@@ -6,3 +6,4 @@ S-coordinate System
 
    method_coordinate_theory
    method_coordinate_implementation
+   method_coordinate_input
