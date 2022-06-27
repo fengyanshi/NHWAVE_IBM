@@ -74,7 +74,7 @@ resulting in
 :math:`\underline{()}` represents modifications needed for the new s-coordinate. 
 
 
-.. IMPORTANT:: Introduce :math:`z_s` function!
+.. IMPORTANT:: We use the original definition :math:`sig` in the code to present 's-coordinate'. :math:`sig` is discretized with equal spacing from 0 to 1.0. The relation between :math:`sig` and :math:`s` can be expressed by :math:`s = f (sig)`. Introduce :math:`z_s` function, which represents the location of :math:`s` in the physical domain, i.e., :math:`z_s = D\cdot s`, where :math:`D` is the total water depth :math:`D = h + \eta`. 
 
 .. figure:: images/s-coor.png
     :align: center
