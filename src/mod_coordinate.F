@@ -44,7 +44,7 @@ MODULE COORDINATE_MODULE
                        Iend1,Jend1,&
                        Grd_R, Ivgrd, Kbeg,Kend,Kend1,Kglob,Nghost,dsig,sigc,sig, &
                        u_bar,v_bar,GAMMA_s,U,V,W,DX,DY,Omega,MASK,SP,HC,SMALL, &
-                       Eta, DelxS,DelyS,DelzS, DeltS, DeltSc,z_face,z_face0, &
+                       Eta, DelxS,DelyS,DelzS,DelzSc,DeltS, DeltSc,z_face,z_face0, &
                        z_center, z_center0,DT
 # if defined (PARALLEL)
     USE GLOBAL, ONLY: myid,ier
@@ -249,8 +249,12 @@ CONTAINS
      Do I=1,Mloc
        DelxSc(I,J,K)=-(z_center(I+1,J,K)-z_center(I-1,J,K))/dx/2.0_SP &
                      /(z_face(I,J,K+1)-z_face(I,J,K))*dsig(K)
+
        DelySc(I,J,K)=-(z_center(I,J+1,K)-z_center(I,J-1,K))/dy/2.0_SP &
                      /(z_face(I,J,K+1)-z_face(I,J,K))*dsig(K)
+
+       DelzSc(I,J,K) = dsig(K)/(z_face(I,J,K+1)-z_face(I,J,K))
+
        DeltSc(I,J,K) = - (z_center(I,J,K)-z_center0(I,J,K))/DT &
                      /(z_face(I,J,K+1)-z_face(I,J,K))*dsig(K)
      ENDDO
@@ -348,12 +352,22 @@ CONTAINS
 
 ! for generic s-coordinate
 
+! use Ds_in_sigma for interpolation
+
      DO K=Kbeg+1,Kend1-1
      DO I=Ibeg,Iend
      DO J=Jbeg,Jend    
-       U_at_s = (U(I,J,K-1)*dsig(K)+U(I,J,K)*dsig(K-1))/(dsig(K)+dsig(K-1))
-       V_at_s = (V(I,J,K-1)*dsig(K)+V(I,J,K)*dsig(K-1))/(dsig(K)+dsig(K-1))
-       W_at_s = (W(I,J,K-1)*dsig(K)+W(I,J,K)*dsig(K-1))/(dsig(K)+dsig(K-1))
+!       U_at_s = (U(I,J,K-1)*dsig(K)+U(I,J,K)*dsig(K-1))/(dsig(K)+dsig(K-1))
+!       V_at_s = (V(I,J,K-1)*dsig(K)+V(I,J,K)*dsig(K-1))/(dsig(K)+dsig(K-1))
+!       W_at_s = (W(I,J,K-1)*dsig(K)+W(I,J,K)*dsig(K-1))/(dsig(K)+dsig(K-1))
+
+       U_at_s = (U(I,J,K-1)*Ds_in_sigma(K)+U(I,J,K)*Ds_in_sigma(K-1)) &
+                  /(Ds_in_sigma(K)+Ds_in_sigma(K-1))
+       V_at_s = (V(I,J,K-1)*Ds_in_sigma(K)+V(I,J,K)*Ds_in_sigma(K-1)) &
+                  /(Ds_in_sigma(K)+Ds_in_sigma(K-1))
+       W_at_s = (W(I,J,K-1)*Ds_in_sigma(K)+W(I,J,K)*Ds_in_sigma(K-1)) &
+                  /(Ds_in_sigma(K)+Ds_in_sigma(K-1))
+
        Omega(I,J,K)= D(I,J) *(DeltS(I,J,K) + U_at_s*DelxS(I,J,K) &
                                              + V_at_s*DelyS(I,J,K) &
                                              + W_at_s*DelzS(I,K,K) )
@@ -365,50 +379,6 @@ CONTAINS
      return
 
      END SUBROUTINE GET_OMEGA
-
-     SUBROUTINE MEAN_VELOCITY
-
-       IMPLICIT NONE
-       INTEGER :: i,j,k
-
-       U_bar = ZERO
-       V_bar = ZERO
-       DO J = 1,Nloc
-       DO I = 1,Mloc
-       DO K = Kbeg,Kend
-         U_bar(I,J)=U_bar(I,J)+U(I,J,K)*dsig(K)
-         V_bar(I,J)=V_bar(I,J)+V(I,J,K)*dsig(K)
-       ENDDO
-       ENDDO
-       ENDDO
-         
-     END SUBROUTINE MEAN_VELOCITY
-
-
-     SUBROUTINE GAMMAS
-!--------------------------------------------------- 
-!    Calculate sigma transformation coefficient
-!    Called by       
-!--------------------------------------------------
-
-       IMPLICIT NONE
-       INTEGER :: i,j,k
-
-       DO K = Ibeg,Iend      
-       DO J = Jbeg,Jend
-       DO I = Kbeg,Kend 
-         GAMMA_s(I,J,K) = (D(I+1,J)*(U(I+1,J,K)-U_bar(I+1,J))-D(I-1,J)*(U(I-1,J,K)-U_bar(I-1,J))) & 
-                          /DX/2.0 &
-                        + (D(I,J+1)*(V(I,J+1,K)-U_bar(I,J+1))-D(I,J-1)*(U(I,J-1,K)-U_bar(I,J-1))) & 
-                          /DY/2.0 &
-                        + (Omega(I,J,K+1)-Omega(I,J,K))/dsig(K)/2.0
-       ENDDO
-       ENDDO
-       ENDDO
-
-
-     END SUBROUTINE GAMMAS
-
 
 
 END MODULE COORDINATE_MODULE

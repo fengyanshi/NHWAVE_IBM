@@ -237,7 +237,7 @@
 ! ROXSI
 
       real(SP), dimension(:,:,:), allocatable :: DelxS, DelyS, DelzS, &
-                                                 DeltS, DeltSc
+                                                 DeltS, DeltSc, DelzSc
       real(SP),dimension(:,:,:),allocatable :: z_face,z_center,z_face0,z_center0
 
 

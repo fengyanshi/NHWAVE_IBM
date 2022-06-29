@@ -114,7 +114,6 @@
 
      call initial
 
-
 # if defined (OBSTACLE)
 
      CALL OBS_INITIALIZATION
@@ -540,7 +539,9 @@
 # else
        DU(i,j,k) = DU(i,j,k)-D(i,j)*dt/Rho0*(DelxP(i,j,k)+DelzP(i,j,k)*DelxSc(i,j,k))
        DV(i,j,k) = DV(i,j,k)-D(i,j)*dt/Rho0*(DelyP(i,j,k)+DelzP(i,j,k)*DelySc(i,j,k))
-       DW(i,j,k) = DW(i,j,k)-dt/Rho0*DelzP(i,j,k)
+!  important ROXSI
+!       DW(i,j,k) = DW(i,j,k)-dt/Rho0*DelzP(i,j,k)
+        DW(i,j,k) = DW(i,j,k)-dt/Rho0*DelzP(i,j,k)*DelzSc(I,J,K)*D(I,J)
 # endif
      enddo
      enddo
@@ -3015,10 +3016,11 @@
        iu = 100+n
        write(FILE_NUM(1:4),'(I4.4)') n
        STAT_FILE = TRIM(FDIR)//'probe_'//TRIM(FILE_NUM)
-!       open(iu,file=TRIM(STAT_FILE),access='APPEND') ! append is not good for rerun
-       open(iu,file=TRIM(STAT_FILE))
+        open(iu,file=TRIM(STAT_FILE),access='APPEND') ! append is not good for rerun
+!       open(iu,file=TRIM(STAT_FILE))
        
        if(zstat(n).eq.0.0) then
+
          do j = Jbeg,Jend
          do i = Ibeg,Iend
            if(xstat(n)>=x(i).and.xstat(n)<x(i+1).and.  &
@@ -13102,11 +13104,13 @@ SUBROUTINE hot_start
        cmiu = 0.09
     endif
 
-     open(5,file='time0.dat')
-     read(5,*) TIME0,Icount,dt
-     close(5)
+!     open(5,file='time0.dat')
+!     read(5,*) TIME0,Icount,dt
+!     close(5)
 
-     TIME=TIME0
+!     TIME=TIME0
+
+      TIME = 0.0
 
      file=TRIM(Eta_HotStart_File)
      call read_2d(Eta,file)

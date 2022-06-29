@@ -1498,7 +1498,7 @@
 
 ! ROXSI
     ALLOCATE(DelxS(Mloc,Nloc,Kloc1),DelyS(Mloc,Nloc,Kloc1),DelzS(Mloc,Nloc,Kloc1), & 
-             DeltS(Mloc,Nloc,Kloc1),DeltSc(Mloc,Nloc,Kloc))
+             DeltS(Mloc,Nloc,Kloc1),DeltSc(Mloc,Nloc,Kloc),DelzSc(Mloc,Nloc,Kloc))
 
     ALLOCATE(z_face(Mloc,Nloc,Kloc1),z_face0(Mloc,Nloc,Kloc1),z_center(Mloc,Nloc,Kloc), &
              z_center0(Mloc,Nloc,Kloc))
